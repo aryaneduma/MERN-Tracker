@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MERN Placement Mastery Companion</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter & Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        },
+                        darkBg: '#0b1329',
+                        darkCard: '#1c2541',
+                        darkBorder: '#3a506b'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .dark .glassmorphism {
+            background: rgba(28, 37, 65, 0.85);
+        }
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .animate-wave {
+            animation: wave 2s infinite ease-in-out;
+        }
+        @keyframes highlight-pulse {
+            0%, 100% { border-color: transparent; }
+            50% { border-color: #0ea5e9; }
+        }
+        .day-pulse-active {
+            animation: highlight-pulse 1.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-40 glassmorphism border-b border-slate-200 dark:border-darkBorder transition-all duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-brand-500 to-indigo-600 text-white p-2.5 rounded-xl shadow-md shadow-brand-500/20">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-brand-600 to-indigo-600 dark:from-brand-500 dark:to-indigo-400 bg-clip-text text-transparent">MERN Mastery</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Placement Blueprint</p>
+                </div>
+            </div>
+
+            <!-- Global Action Stats -->
+            <div class="hidden md:flex items-center space-x-6">
+                <!-- Streak Tracker -->
+                <div class="flex items-center bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-900/50 px-3.5 py-1.5 rounded-xl">
+                    <i class="fa-solid fa-fire text-orange-500 animate-pulse mr-2"></i>
+                    <div>
+                        <div class="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">Active Streak</div>
+                        <div class="text-sm font-extrabold text-orange-700 dark:text-orange-300"><span id="global-streak">0</span> Days</div>
+                    </div>
+                </div>
+
+                <!-- Total Mastery -->
+                <div class="flex items-center bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 px-3.5 py-1.5 rounded-xl">
+                    <i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>
+                    <div>
+                        <div class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-sans">Total Progress</div>
+                        <div class="text-sm font-extrabold text-emerald-700 dark:text-emerald-300"><span id="global-completion">0%</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleMEVModal()" class="flex items-center space-x-1.5 px-3.5 py-2 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 text-xs font-semibold rounded-xl border border-rose-100 dark:border-rose-900/50 hover:bg-rose-100 dark:hover:bg-rose-950 transition">
+                    <i class="fa-solid fa-bolt text-rose-500"></i>
+                    <span>Low Energy?</span>
+                </button>
+                
+                <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl border border-slate-200 dark:border-darkBorder hover:bg-slate-100 dark:hover:bg-darkCard transition text-slate-600 dark:text-slate-300" title="Toggle Theme">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex flex-col lg:flex-row gap-6">
+        
+        <!-- Sidebar Navigation Dashboard Controls -->
+        <aside class="lg:w-64 flex-shrink-0 flex flex-col gap-4">
+            <!-- Sidebar Panel Card -->
+            <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-4 shadow-sm flex flex-col gap-1.5">
+                <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase px-3 tracking-wider mb-2">Navigation</p>
+                
+                <button onclick="switchTab('dashboard')" id="btn-tab-dashboard" class="nav-tab-btn flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition bg-brand-500 text-white shadow-md shadow-brand-500/10">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-chart-pie w-5"></i>
+                        <span>Dashboard</span>
+                    </div>
+                    <span class="text-xs opacity-80" id="badge-mastery">0%</span>
+                </button>
+
+                <button onclick="switchTab('curriculum')" id="btn-tab-curriculum" class="nav-tab-btn flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-route w-5"></i>
+                        <span>Full Roadmap</span>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('projects')" id="btn-tab-projects" class="nav-tab-btn flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-folder-open w-5"></i>
+                        <span>8 Resume Projects</span>
+                    </div>
+                    <span class="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full" id="badge-projects-count">0/8</span>
+                </button>
+
+                <button onclick="switchTab('jobtracker')" id="btn-tab-jobtracker" class="nav-tab-btn flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-briefcase w-5"></i>
+                        <span>Job Application Tracker</span>
+                    </div>
+                    <span class="text-xs bg-brand-100 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 px-2 py-0.5 rounded-full font-bold" id="badge-jobs-count">0</span>
+                </button>
+
+                <button onclick="switchTab('aitools')" id="btn-tab-aitools" class="nav-tab-btn flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-wand-magic-sparkles w-5"></i>
+                        <span>AI Study Assistant</span>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Profile Overview Quick Card -->
+            <div class="bg-gradient-to-br from-brand-900 to-indigo-950 text-white rounded-2xl p-5 shadow-lg border border-brand-900/20 relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 text-brand-800/20 text-8xl font-black">M</div>
+                <h3 class="text-base font-extrabold tracking-tight">Consistency Loop</h3>
+                <p class="text-xs text-brand-200 mt-1">Complete these 5 tasks daily to build your placement momentum.</p>
+                
+                <!-- Dynamic Quick Checklist -->
+                <div class="mt-4 flex flex-col gap-2.5 relative z-10" id="habit-loop-container">
+                    <!-- Javascript will populate custom interactive checks -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center Dashboard Area -->
+        <section class="flex-1 flex flex-col gap-6 min-w-0">
+
+            <!-- TAB 1: DASHBOARD -->
+            <div id="tab-dashboard" class="tab-content flex flex-col gap-6">
+                <!-- Welcome Banner -->
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400 p-4 rounded-2xl text-2xl flex-shrink-0">
+                            <i class="fa-solid fa-star-and-crescent animate-wave"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-black text-slate-900 dark:text-white leading-tight">Welcome Back, Cadet!</h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1" id="daily-motivational-quote">"Consistency is not about intensity, it is about sustainable daily focus."</p>
+                        </div>
+                    </div>
+                    <button onclick="findNextUncompletedDay()" class="px-5 py-3 bg-brand-500 hover:bg-brand-600 text-white text-sm font-bold rounded-xl shadow-md shadow-brand-500/20 transition flex items-center space-x-2 flex-shrink-0">
+                        <span>Continue Training</span>
+                        <i class="fa-solid fa-circle-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Dynamic 4-Day Focus Zone -->
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-extrabold text-base flex items-center gap-2">
+                                <i class="fa-solid fa-bullseye text-brand-500 animate-pulse"></i>
+                                <span>🎯 Your Active Focus Zone</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">Highly focused step-by-step training pipeline containing your immediate targets.</p>
+                        </div>
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-2.5 py-1 rounded-lg" id="focus-zone-active-indicator">Target Day: 1</span>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4" id="focus-zone-cards-container">
+                        <!-- Populated dynamically via javascript -->
+                    </div>
+                </div>
+
+                <!-- Comprehensive Metrics Dashboard -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl shadow-sm">
+                        <div class="flex items-center justify-between text-slate-400 dark:text-slate-500 mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider">Month 1 (Foundations)</span>
+                            <i class="fa-solid fa-code text-lg"></i>
+                        </div>
+                        <div class="text-2xl font-black" id="stat-month-1">0 / 28 Days</div>
+                        <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
+                            <div class="bg-brand-500 h-full rounded-full transition-all duration-300" id="progress-month-1" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl shadow-sm">
+                        <div class="flex items-center justify-between text-slate-400 dark:text-slate-500 mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider">Month 2 (React App)</span>
+                            <i class="fa-brands fa-react text-lg"></i>
+                        </div>
+                        <div class="text-2xl font-black" id="stat-month-2">0 / 28 Days</div>
+                        <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
+                            <div class="bg-indigo-500 h-full rounded-full transition-all duration-300" id="progress-month-2" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl shadow-sm">
+                        <div class="flex items-center justify-between text-slate-400 dark:text-slate-500 mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider">Month 3 (Database)</span>
+                            <i class="fa-solid fa-database text-lg"></i>
+                        </div>
+                        <div class="text-2xl font-black" id="stat-month-3">0 / 28 Days</div>
+                        <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
+                            <div class="bg-emerald-500 h-full rounded-full transition-all duration-300" id="progress-month-3" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl shadow-sm">
+                        <div class="flex items-center justify-between text-slate-400 dark:text-slate-500 mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider">Month 4 (Deploy & AI)</span>
+                            <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                        </div>
+                        <div class="text-2xl font-black" id="stat-month-4">0 / 36 Days</div>
+                        <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
+                            <div class="bg-amber-500 h-full rounded-full transition-all duration-300" id="progress-month-4" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Quick Action Panels -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Project status check list -->
+                    <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm lg:col-span-2 flex flex-col gap-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-extrabold text-base">Core Projects Tracker</h3>
+                            <button onclick="switchTab('projects')" class="text-brand-500 hover:text-brand-600 text-xs font-bold">View Guides <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="dashboard-project-cards">
+                            <!-- Populated interactively -->
+                        </div>
+                    </div>
+
+                    <!-- Placement Checklist Card -->
+                    <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm flex flex-col gap-4">
+                        <h3 class="font-extrabold text-base">Graduation Checklist</h3>
+                        <div class="flex flex-col gap-3" id="dashboard-graduation-list">
+                            <!-- Hydrated with state logic -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: ROADMAP/CURRICULUM -->
+            <div id="tab-curriculum" class="tab-content hidden flex flex-col gap-6">
+                <!-- Roadmap Controls Header -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl shadow-sm">
+                    <div>
+                        <h2 class="text-lg font-black">Full Interactive Roadmap (120 Days)</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Review and study the entire comprehensive spectrum of your placement milestones.</p>
+                    </div>
+                    
+                    <!-- Month Filter Switches -->
+                    <div class="flex flex-wrap gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                        <button onclick="filterRoadmapMonth(1)" id="filter-btn-m1" class="roadmap-filter-btn px-3.5 py-1.5 text-xs font-extrabold rounded-lg transition bg-white dark:bg-darkCard shadow-sm text-brand-600 dark:text-brand-400">Month 1</button>
+                        <button onclick="filterRoadmapMonth(2)" id="filter-btn-m2" class="roadmap-filter-btn px-3.5 py-1.5 text-xs font-extrabold rounded-lg transition text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-700">Month 2</button>
+                        <button onclick="filterRoadmapMonth(3)" id="filter-btn-m3" class="roadmap-filter-btn px-3.5 py-1.5 text-xs font-extrabold rounded-lg transition text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-700">Month 3</button>
+                        <button onclick="filterRoadmapMonth(4)" id="filter-btn-m4" class="roadmap-filter-btn px-3.5 py-1.5 text-xs font-extrabold rounded-lg transition text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-700">Month 4</button>
+                    </div>
+                </div>
+
+                <!-- Unified Roadmap Listing container -->
+                <div class="flex flex-col gap-4" id="roadmap-timeline-container">
+                    <!-- Programmatic high-fidelity days injection loop -->
+                </div>
+            </div>
+
+            <!-- TAB 3: PROJECTS -->
+            <div id="tab-projects" class="tab-content hidden flex flex-col gap-6">
+                <!-- Projects Header -->
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl shadow-sm">
+                    <h2 class="text-lg font-black">MERN Portfolio Core Projects Blueprint</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Develop these 8 essential projects designed to demonstrate expert engineering practices to technical recruiters.</p>
+                </div>
+
+                <!-- Projects Directory Lists -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="projects-directory-grid">
+                    <!-- Managed via projects structure dynamically -->
+                </div>
+            </div>
+
+            <!-- TAB 4: JOB APPLICATION TRACKER -->
+            <div id="tab-jobtracker" class="tab-content hidden flex flex-col gap-6">
+                <!-- Job Tracker Info Bar -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl shadow-sm">
+                    <div>
+                        <h2 class="text-lg font-black">Job Search Pipeline Tracker</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Submit high-quality, targeted applications and track their lifecycle securely.</p>
+                    </div>
+                    <button onclick="openJobModal()" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-extrabold rounded-xl transition flex items-center space-x-1.5 shadow-md shadow-brand-500/10">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add Opportunity</span>
+                    </button>
+                </div>
+
+                <!-- Applications Database Table Panel -->
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+                                    <th class="p-4">Company</th>
+                                    <th class="p-4">Target Role</th>
+                                    <th class="p-4">Date Applied</th>
+                                    <th class="p-4">Source Channel</th>
+                                    <th class="p-4">Outreach Status</th>
+                                    <th class="p-4">Next Step</th>
+                                    <th class="p-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="job-tracker-rows-container">
+                                <!-- Generated interactively -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="job-tracker-empty-state" class="hidden p-12 text-center flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                        <i class="fa-solid fa-inbox text-4xl mb-3 opacity-60"></i>
+                        <p class="text-sm font-bold">Your Application Pipeline is Empty</p>
+                        <p class="text-xs mt-1">Start targeting 5 high-converting cold-emails daily!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: AI STUDY ASSISTANT -->
+            <div id="tab-aitools" class="tab-content hidden flex flex-col gap-6">
+                <!-- AI Safe Prompts Info -->
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl shadow-sm">
+                    <h2 class="text-lg font-black">AI Study Assistant & Prompts Engine</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Avoid tutorial addiction. Use these optimized prompt generators to query ChatGPT or Gemini safely.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Prompts Generator Selector Card -->
+                    <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl shadow-sm flex flex-col gap-4">
+                        <h3 class="font-extrabold text-base">Prompt Blueprint Generator</h3>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Select Your Use Case</label>
+                            <select id="prompt-use-case-select" onchange="generateCustomPrompt()" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="explain">Line-by-Line Code Explainer (Deep Walkthrough)</option>
+                                <option value="analogy">Conceptual Mental Models & Analogies</option>
+                                <option value="edgecases">Generate Edge-case Validation Tests</option>
+                                <option value="mockinterview">Act as a Technical System Interviewer</option>
+                                <option value="refactor">Identify Code Smells & Refactoring Guidelines</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Customize Topic (Optional)</label>
+                            <input type="text" id="prompt-custom-topic" oninput="generateCustomPrompt()" placeholder="e.g., Closures, React Context, JWT Security" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div class="mt-2 bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-900/40 p-3.5 rounded-xl flex gap-3">
+                            <i class="fa-solid fa-triangle-exclamation text-yellow-500 mt-0.5"></i>
+                            <p class="text-xs text-yellow-800 dark:text-yellow-400 leading-normal">
+                                <span class="font-extrabold">Safe AI Usage Rule:</span> Never ask AI to <em>"write code for this project from scratch."</em> Use it as a deep-dives tutor.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Prompts Output Displays Card -->
+                    <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl shadow-sm flex flex-col gap-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-extrabold text-base">Generated System Prompt</h3>
+                            <button onclick="copyPromptToClipboard()" class="px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-lg transition flex items-center space-x-1">
+                                <i class="fa-regular fa-copy"></i>
+                                <span>Copy Prompt</span>
+                            </button>
+                        </div>
+                        <div class="flex-1 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-darkBorder p-4 rounded-xl">
+                            <pre id="prompt-output-display" class="text-xs font-mono whitespace-pre-wrap leading-relaxed text-slate-600 dark:text-slate-300 custom-scrollbar max-h-64 overflow-y-auto">Select a use case to begin generating high-yield developer prompts...</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Curated Developer Library Links -->
+                <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder p-5 rounded-2xl shadow-sm flex flex-col gap-4">
+                    <h3 class="font-extrabold text-base">Free Developer Ecosystem Libraries</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <a href="https://developer.mozilla.org" target="_blank" class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-xl transition border border-slate-100 dark:border-slate-800">
+                            <i class="fa-brands fa-chrome text-rose-500 text-lg"></i>
+                            <div>
+                                <h4 class="text-xs font-extrabold">MDN Web Docs</h4>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Definitive HTML, CSS, & JS specifications.</p>
+                            </div>
+                        </a>
+                        <a href="https://react.dev" target="_blank" class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-xl transition border border-slate-100 dark:border-slate-800">
+                            <i class="fa-brands fa-react text-brand-500 text-lg animate-spin" style="animation-duration: 8s"></i>
+                            <div>
+                                <h4 class="text-xs font-extrabold">React.js Docs</h4>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Modern functional components guides.</p>
+                            </div>
+                        </a>
+                        <a href="https://freecodecamp.org" target="_blank" class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-xl transition border border-slate-100 dark:border-slate-800">
+                            <i class="fa-solid fa-laptop-code text-emerald-500 text-lg"></i>
+                            <div>
+                                <h4 class="text-xs font-extrabold">freeCodeCamp</h4>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Robust hands-on mock test environments.</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- MODAL 1: ADD JOB OPPORTUNITY -->
+    <div id="job-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkCard rounded-2xl max-w-md w-full border border-slate-200 dark:border-darkBorder shadow-2xl overflow-hidden flex flex-col scale-95 transition-all duration-300">
+            <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                <h3 class="font-extrabold text-base flex items-center gap-2">
+                    <i class="fa-solid fa-briefcase text-brand-500"></i>
+                    <span>Log New Application</span>
+                </h3>
+                <button onclick="closeJobModal()" class="text-slate-400 hover:text-slate-500"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form onsubmit="handleJobFormSubmit(event)" class="p-5 flex flex-col gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Company Name</label>
+                    <input type="text" id="job-company" required placeholder="e.g., Stripe, Uber" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Target Role</label>
+                    <input type="text" id="job-role" required placeholder="e.g., MERN Developer, Frontend Intern" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Applied Date</label>
+                        <input type="date" id="job-date" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Pipeline State</label>
+                        <select id="job-status" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="Applied">Applied</option>
+                            <option value="Tech Test">Technical Test</option>
+                            <option value="Interview">Interview</option>
+                            <option value="Offered">Offer Letter</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Source Channel</label>
+                    <input type="text" id="job-source" placeholder="e.g., Cold Email to CTO, Referral on Wellfound" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-1.5">Immediate Next Step</label>
+                    <input type="text" id="job-next" placeholder="e.g., Follow up on Thursday" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div class="flex justify-end gap-3 mt-2">
+                    <button type="button" onclick="closeJobModal()" class="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-extrabold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition">Cancel</button>
+                    <button type="submit" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-extrabold rounded-xl transition shadow-md shadow-brand-500/10">Log Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: MINIMUM EFFORT VERSION (MEV) -->
+    <div id="mev-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkCard rounded-2xl max-w-md w-full border border-slate-200 dark:border-darkBorder shadow-2xl overflow-hidden flex flex-col">
+            <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                <h3 class="font-extrabold text-base flex items-center gap-2 text-rose-500">
+                    <i class="fa-solid fa-shield-halved animate-bounce"></i>
+                    <span>Emergency Recovery (MEV)</span>
+                </h3>
+                <button onclick="toggleMEVModal()" class="text-slate-400 hover:text-slate-500"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <div class="p-5 flex flex-col gap-4">
+                <p class="text-xs text-slate-500 dark:text-slate-400 leading-normal">
+                    Energy too low? Internet connection down? Don't break your green streak. Complete this <span class="font-extrabold text-slate-800 dark:text-white">1-Hour emergency MEV</span> instead of dropping out:
+                </p>
+
+                <div class="flex flex-col gap-3">
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800/80 cursor-pointer">
+                        <input type="checkbox" id="mev-check-1" class="mt-0.5 rounded text-brand-500 focus:ring-brand-500 h-4 w-4">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Trace/Read Peer Code (15 Mins)</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Analyze other portfolios on GitHub or repositories.</p>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800/80 cursor-pointer">
+                        <input type="checkbox" id="mev-check-2" class="mt-0.5 rounded text-brand-500 focus:ring-brand-500 h-4 w-4">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Solve One Simple Array Problem (15 Mins)</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Solve an easy JS string or array puzzle.</p>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800/80 cursor-pointer">
+                        <input type="checkbox" id="mev-check-3" class="mt-0.5 rounded text-brand-500 focus:ring-brand-500 h-4 w-4">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Revision Flashcards Review (15 Mins)</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Scan through your local Cornell questions note-blocks.</p>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800/80 cursor-pointer">
+                        <input type="checkbox" id="mev-check-4" class="mt-0.5 rounded text-brand-500 focus:ring-brand-500 h-4 w-4">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Community Outreach Comment (15 Mins)</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Post one constructive feedback or tip on LinkedIn.</p>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex gap-3 justify-end mt-2">
+                    <button onclick="toggleMEVModal()" class="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-extrabold rounded-xl">Close</button>
+                    <button onclick="confirmMEVSaving()" class="px-4 py-2.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-extrabold rounded-xl transition">Submit Emergency Block</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION CUSTOM TOASTS -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-12 opacity-0 transition-all duration-300 bg-slate-900 text-white px-5 py-3 rounded-2xl flex items-center space-x-3 shadow-2xl max-w-sm">
+        <i id="toast-icon" class="fa-solid fa-info text-brand-400"></i>
+        <span id="toast-message" class="text-xs font-semibold">Prompt saved successfully!</span>
+    </div>
+
+    <script>
+        // Comprehensive metadata structure database
+        const curriculumTimeline = {
+            m1: {
+                title: "Frontend Foundations (HTML, CSS, Git, JS & Arrays DSA)",
+                weeks: {
+                    w1: {
+                        title: "Week 1: Core Layout Mechanics (HTML5 & CSS3)",
+                        days: {
+                            d1: { title: "Day 1: Semantic Structures & Setup", hours: 6, code: "index.html", topics: ["Semantic HTML5", "Modern Landmarks layout structures", "VS Code workspaces configurations"], challenge: "Structure an accessible landing page article containing media blocks with no styling.", dsa: ["Trace and document semantic replacements for 10 nested DIV wrappers."], revision: "State differences between Block, Inline, and Inline-Block element models." },
+                            d2: { title: "Day 2: Advanced CSS Core Engines", hours: 8, code: "main.css", topics: ["CSS Box Model", "Relative/Absolute Positioning contexts", "Cascade Specificity Rules"], challenge: "Recreate a product display layout containing relative status tags aligned to container margins.", dsa: ["Isolate a collapsed margins layout using box-sizing resets."], revision: "Explain Cascade Specificity calculations across selectors lists." },
+                            d3: { title: "Day 3: Mastering CSS Flexbox", hours: 7, code: "navbar.css", topics: ["Flex Direction and wrapping alignments", "Grow, Shrink & Basis distributions scaling", "Auto margins allocations"], challenge: "Develop a modern, mobile-responsive navigation bar with logo aligned left and links grouped right.", dsa: ["Solve all 24 levels of Flexbox Froggy without using hints."], revision: "How does setting flex: 1 1 200px differ from setting width: 200px?" },
+                            d4: { title: "Day 4: Grid Layout Powerhouse", hours: 7, code: "gallery.css", topics: ["Implicit vs Explicit tracks", "Repeat(), Minmax() sizing metrics", "Grid layout grid-template-areas mapping"], challenge: "Code a dynamic photo gallery spanning varying row/column dimensions.", dsa: ["Solve Grid Garden levels in single pass."], revision: "Contrast Flexbox (1D layouts) with CSS Grid (2D systems)." },
+                            d5: { title: "Day 5: Custom Customizations & Variables", hours: 8, code: "theme.css", topics: ["CSS Custom Properties (Variables)", "Keyframe animations models", "Dynamic fluid clamp() typographies"], challenge: "Construct light/dark selector structures, swapping theme variable maps on active classes.", dsa: ["Create a progress-loading indicator using css animation keyframes."], revision: "What performance metrics does CSS custom variables override prevent?" },
+                            d6: { title: "Day 6: Portfolio Deployment & Git Sandboxing", hours: 8, code: "portfolio-setup", topics: ["Initializing Git repositories", "Remote repositories matching", "Build actions setups"], challenge: "Generate a semantic production draft of your portfolio layout, check in commits via Git.", dsa: ["Configure remote repository and execute standard push pathways."], revision: "Describe staging indices properties compared to actual local Git commits." },
+                            d7: { title: "Day 7: Buffer, Analysis, & Evaluation", hours: 4, code: "review", topics: ["Codebase structural audits", "Optimizing redundant CSS stylesheets", "Documentation compilation"], challenge: "Redesign an old layout element in under 1.5 hours using clean CSS Grid systems.", dsa: ["Analyze standard layouts specifications of 3 target portfolios."], revision: "Document week-1 design tokens parameters." }
+                        }
+                    },
+                    w2: {
+                        title: "Week 2: Core JavaScript Fundamentals (Logical Control Flow)",
+                        days: {
+                            d8: { title: "Day 8: JavaScript Execution Foundations", hours: 7, code: "hoisting.js", topics: ["Execution Contexts", "Scope chain properties", "Hoisting & Temporal Dead Zones"], challenge: "Write variables maps tracking scope shifts across conditional block declarations.", dsa: ["Predict console logs in highly nested execution context scenarios."], revision: "Explain Stack vs Heap memory management rules." },
+                            d9: { title: "Day 9: Data Structures & Control Flows in JS", hours: 8, code: "loops.js", topics: ["Primitives vs Reference Types", "Implicit Type Coercion pathways", "Logical operators evaluations"], challenge: "Loop over nested collections extracting aggregate counts while filtering keys.", dsa: ["FizzBuzz algorithm using optimized ternary chaining paths."], revision: "Is there any operational difference between double-equals and triple-equals?" },
+                            d10: { title: "Day 10: JavaScript Functions & Scope Deep Dive", hours: 8, code: "closure.js", topics: ["Arrow functions lexical context", "Closures & Private states scopes", "High-Order Functions patterns"], challenge: "Build custom memoization cache closures returning cached configurations.", dsa: ["Write dynamic callback tracking timers measuring loop durations."], revision: "Detail how closures preserve lexical lexical state memory." },
+                            d11: { title: "Day 11: Introduction to Arrays & Array Iterators", hours: 8, code: "iterators.js", topics: ["Iterative Methods: map, filter, reduce", "Array Mutations vs Non-Mutations", "Find and sorting indexes"], challenge: "Aggregate total valuations of specific categories using map and reduce chains.", dsa: ["Polyfill standard Array.prototype.map and Array.prototype.filter."], revision: "Does Array.prototype.forEach mutate initial array structures?" },
+                            d12: { title: "Day 12: Object Methods & Manipulation", hours: 7, code: "objects.js", topics: ["Dynamic destructuring properties", "Clone operations: deep vs shallow", "Object entries validations"], challenge: "Write data transformation adapters compiling raw database rows into key-value collections.", dsa: ["Deep clone complex nested objects without using JSON serialization models."], revision: "What performance issue does shallow copying are susceptible to?" },
+                            d13: { title: "Day 13: DSA Day 1: Array Foundations", hours: 8, code: "arrays-dsa-1.js", topics: ["Linear array search algorithms", "Reverse transformations", "Big-O complexities analysis"], challenge: "Write reverse-in-place indices modifications algorithms.", dsa: ["Solve: Reverse an Array in-place", "Solve: Find Maximum and Minimum inside dynamic collections", "Solve: Two Sum (Brute Force vs Optimized Hash Maps)"], revision: "Explain space and time complexities profiles of JS array methods." },
+                            d14: { title: "Day 14: Buffer, Review & Week 2 Challenge", hours: 5, code: "review-2.js", topics: ["Validating JS logical errors", "Debugging in browser runtime console", "State validation pipelines"], challenge: "Refactor dynamic pricing controllers in under 3 hours using clean JS logic.", dsa: ["Audit 5 intentional memory-leak issues in debug exercises."], revision: "Record standard hoisting properties constraints." }
+                        }
+                    },
+                    w3: {
+                        title: "Week 3: Dynamic DOM Interaction & Web Storages",
+                        days: {
+                            d15: { title: "Day 15: Deep DOM Selection & Manipulation", hours: 7, code: "dom.js", topics: ["Document Object Model Trees", "Selection engines: querySelectorAll", "Node creations and visual updates"], challenge: "Construct interactive modular details accordion components via pure node bindings.", dsa: ["Insert dynamic DOM nodes list avoiding layout reflows."], revision: "Explain properties and utilities of DocumentFragment nodes." },
+                            d16: { title: "Day 16: Events & Event Delegation Engine", hours: 8, code: "events.js", topics: ["Event Propagations: Bubbling vs Capturing", "Delegation models implementations", "PreventDefault & StopPropagation"], challenge: "Assign single dynamic click coordinator tracking clicks inside 100 lists elements.", dsa: ["Construct drop-down widgets closing dynamically on clicks outside components."], revision: "State dynamic differences between bubbling and capturing models." },
+                            d17: { title: "Day 17: LocalStorage, SessionStorage & Session States", hours: 8, code: "storage.js", topics: ["Web Storage API specifications", "Auto-serialization structures", "Persistent state mappings"], challenge: "Connect dynamic theme swapper variables mapping settings directly to localStorage.", dsa: ["Design secure storage helper classes with data-parsing validation safeguards."], revision: "Compare storage limit sizes across localstorage and cookies structures." },
+                            d18: { title: "Day 18: Project 2 Completion & Performance Diagnostics", hours: 8, code: "todo-polish.js", topics: ["Event leak preventions", "Refactoring dynamic click bindings", "Chrome DevTools audits"], challenge: "Complete Todo App with persistent arrays mapping inputs directly to LocalStorage.", dsa: ["Sort task metrics dynamically by creation durations indices."], revision: "Highlight memory allocations leaks inside event listeners pools." },
+                            d19: { title: "Day 19: DSA Day 2: Advanced Arrays Patterns", hours: 8, code: "arrays-dsa-2.js", topics: ["Two-Pointer array traversal algorithms", "Sliding Windows fundamentals", "Space optimizations techniques"], challenge: "Write dynamic boundaries isolation algorithms without generating duplicates arrays.", dsa: ["Solve: Move Zeroes to end of list keeping relative locations", "Solve: Remove Duplicates from Sorted Array", "Solve: Container With Most Water"], revision: "Why is two-pointer array traversals computationally faster?" },
+                            d20: { title: "Day 20: DSA Day 3: String Parsing Foundations", hours: 8, code: "strings-dsa.js", topics: ["ASCII matching properties", "String immutability mechanisms", "Validating profiles via Regex"], challenge: "Build character frequency maps from long paragraph logs.", dsa: ["Solve: Valid Palindrome ignoring spaces and symbols", "Solve: Reverse String arrays", "Solve: Longest Common Prefix"], revision: "How does Javascript manage string mutation operations in memory?" },
+                            d21: { title: "Day 21: Week 3 Evaluation & Code Review", hours: 5, code: "review-3.js", topics: ["Refactoring validation workflows", "Code auditing practices", "Error handling structures"], challenge: "Build stopwatch trackers caching lap states directly to storage in under 2.5 hours.", dsa: ["Audit open-source portfolio repositories, tracing event handlers patterns."], revision: "State standard event delegation best-practices." }
+                        }
+                    },
+                    w4: {
+                        title: "Week 4: Asynchronous JavaScript & REST APIs",
+                        days: {
+                            d22: { title: "Day 22: Understanding Asynchronous Javascript", hours: 7, code: "async.js", topics: ["Single Threaded executions runtime", "Event Loop, Task Queue & Microtask Queue", "Callback Hell mitigations"], challenge: "Write custom timeout execution sequences documenting logs order lists.", dsa: ["Refactor complex nested callback pipelines into sequential callback flows."], revision: "Explain the difference between Macrotasks queues and Microtasks queues." },
+                            d23: { title: "Day 23: Mastering ES6 Promises & APIs Fetching", hours: 8, code: "promises.js", topics: ["Promises states: Pending, Fulfilled, Rejected", "Fetch API request protocols", "Concurrencies via Promise.all"], challenge: "Fetch details parameters from public REST APIs, updating dashboards inputs.", dsa: ["Manage 3 parallel API queries compiling results into a single profile."], revision: "Detail internal properties of standard Promise containers." },
+                            d24: { title: "Day 24: Modern Async/Await & Robust Error Handling", hours: 8, code: "async-await.js", topics: ["Async and Await execution mechanics", "Catching async failures via Try-Catch", "Handling HTTP status code errors"], challenge: "Construct high-performance fetch wrapper models utilizing exponential retry backoffs.", dsa: ["Safeguard async controllers against 404/500 API exceptions without app crashes."], revision: "Why is async/await structurally cleaner than promise chain maps?" },
+                            d25: { title: "Day 25: Project 3 Implementation (Weather Forecaster)", hours: 8, code: "weather-app.js", topics: ["Dynamic card injections", "Integrating REST APIs responses", "UI indicators state updates"], challenge: "Connect Weather App rendering meteorological indices dynamically from city searches.", dsa: ["Parse complex API payload data maps utilizing optional chaining safely."], revision: "Explain cross-origin resource sharing (CORS) exceptions." },
+                            d26: { title: "Day 26: Project 3 Optimization & Final Deployment", hours: 8, code: "weather-deploy", topics: ["Production compilations workflows", "Securing API keys maps", "Vercel deployments pipelines"], challenge: "Deploy Weather App to Vercel, auditing load times via Google Lighthouse.", dsa: ["Integrate system state offline indicators utilizing window connection listeners."], revision: "How do you protect API credentials in static client-side setups?" },
+                            d27: { title: "Day 27: DSA Day 4: HashMaps Placement Standards", hours: 8, code: "hashmaps-dsa.js", topics: ["HashMap lookup time profiles", "Frequency counting architectures", "Collision resolutions"], challenge: "Extract and isolate letter occurrences indices using ES6 Map objects.", dsa: ["Solve: Contains Duplicate in $O(N)$ time complexity", "Solve: Valid Anagram utilizing maps", "Solve: Two Sum (Optimized Hash Map single-pass)"], revision: "Compare search complexities profiles of Arrays vs HashMaps." },
+                            d28: { title: "Day 28: Month 1 Grand Assessment & Portfolio Review", hours: 6, code: "m1-final.js", topics: ["Evaluating Month 1 targets", "Structuring clean LinkedIn outlines", "Code organization standardizations"], challenge: "Re-organize Project 2 and Project 3 into ES6 module systems.", dsa: ["Complete 1-hour arrays/strings timed challenges benchmark."], revision: "Consolidate Week 4 API connection patterns." }
+                        }
+                    }
+                }
+            },
+            m2: {
+                title: "Frontend Mastery & React (Components, State, APIs & Aptitude)",
+                weeks: {
+                    w5: {
+                        title: "Week 5: React Core, Vite Tooling & State Mappings",
+                        days: {
+                            d29: { title: "Day 29: Entering the React Ecosystem", hours: 7, code: "App.jsx", topics: ["Virtual DOM reconciliation", "Vite build tools layouts", "JSX syntax constraints"], challenge: "Initialize React app via Vite, cleaning default boilerplates.", dsa: ["Construct dynamic lists layout mapping lists objects inside elements."], revision: "Why can't JSX blocks output adjacent sibling tags without Fragment wraps?" },
+                            d30: { title: "Day 30: Components & Props Deep Dive", hours: 8, code: "Props.jsx", topics: ["Modular designs structures", "Props declarations and patterns", "Managing Children attributes"], challenge: "Build clean, reusable button configurations supporting variants.", dsa: ["Pass configuration states through multiple nested children levels."], revision: "Detail the immutability properties of React component props." },
+                            d31: { title: "Day 31: Component State Management via useState", hours: 8, code: "State.jsx", topics: ["useState initialization loops", "Functional state update flows", "Batch updates mechanisms"], challenge: "Code dynamic incremental counters tracking multiple indices parameters.", dsa: ["Synchronize input states to parent levels via uplift state patterns."], revision: "Why aren't dynamic state mutations visible immediately on console lines?" },
+                            d32: { title: "Day 32: Mastering Tailwind CSS in React", hours: 8, code: "Tailwind.jsx", topics: ["Utility CSS selectors layouts", "Fluid responsive structures", "Transition configurations"], challenge: "Convert static forms layouts into fully responsive layouts utilizing Tailwind classes.", dsa: ["Design a mobile drawer panel with animations using Tailwind CSS."], revision: "What performance utility does Tailwind's JIT compilation offer?" },
+                            d33: { title: "Day 33: Lists, Key Indicators & Cond Rendering", hours: 8, code: "Lists.jsx", topics: ["Mapping lists collections", "Reconciliation key metrics", "Conditional blocks renders"], challenge: "Build list controllers with dynamic criteria filters and sort configurations.", dsa: ["Design search inputs filtering long mock arrays logs dynamically."], revision: "Detail key attributes roles in dynamic DOM reconciliation." },
+                            d34: { title: "Day 34: DSA Day 5: Basic Binary Search Patterns", hours: 8, code: "binary-search-dsa.js", topics: ["Divide and Conquer methodologies", "Binary Search indexes tracking", "Boundary limits optimization"], challenge: "Implement recursive binary search returning counts of iterations taken.", dsa: ["Solve: Binary Search on sorted arrays", "Solve: Search Insert Position", "Solve: First and Last Position of element in sorted collection"], revision: "Prerequisites of utilizing Binary Search on dynamic collections." },
+                            d35: { title: "Day 35: Weekly Checkpoint & Code Review Practice", hours: 5, code: "review-5.jsx", topics: ["Audit component render passes", "Optimizing redundant renders", "UI testing loops"], challenge: "Build modular responsive product filters panel structures in under 3 hours.", dsa: ["Evaluate render trees optimizations inside Chrome DevTools."], revision: "Review Week 5 component composition patterns." }
+                        }
+                    },
+                    w6: {
+                        title: "Week 6: Hook Lifecycles, Forms & Dynamic Mappings",
+                        days: {
+                            d36: { title: "Day 36: Mastering useEffect & Component Lifecycles", hours: 8, code: "useEffect.jsx", topics: ["Mount, Update & Unmount phases", "Dependency Arrays parameters", "Unmount side effect cleanups"], challenge: "Build dynamic, robust timer clocks clearing interval listeners on unmount.", dsa: ["Fetch real-time data from APIs only when specific filters updates."], revision: "Describe consequences of omitting dependencies array inside useEffect hooks." },
+                            d37: { title: "Day 37: Accessing DOM Nodes via useRef", hours: 7, code: "useRef.jsx", topics: ["React References mechanics", "Preserving mutable states without render triggers", "Managing focus controls"], challenge: "Focus inputs on mount, logging render counts without trigger loops.", dsa: ["Build custom video playback dashboards using references bindings."], revision: "Contrast useState vs useRef usages and properties." },
+                            d38: { title: "Day 38: Form Handling & Custom Validation", hours: 8, code: "Forms-React.jsx", topics: ["Controlled vs Uncontrolled configurations", "Handling multi-input objects", "Custom validations Regex checks"], challenge: "Build dynamic registration dashboards with live passwords strength bars.", dsa: ["Validate nested registration payloads mapping fields errors dynamically."], revision: "State benefits of controlled inputs structures." },
+                            d39: { title: "Day 39: Custom Hooks Abstractions", hours: 8, code: "useLocalStorage.js", topics: ["Isolating state abstractions logic", "Creating custom fetch indicators", "Code composability practices"], challenge: "Code custom useLocalStorage hook synchronizing configurations states directly to browser storage.", dsa: ["Build custom useFetch hook returning dynamic logs arrays and error statuses."], revision: "Detail standard rules of React Hooks placement." },
+                            d40: { title: "Day 40: DSA Day 6: Sorting & Two-Pointer Standards", hours: 8, code: "sorting-dsa.js", topics: ["In-place array manipulations", "Sorting algorithms mechanics", "Big-O space scaling bounds"], challenge: "Implement Bubble Sort or Insertion Sort tracking total swap operations counts.", dsa: ["Solve: Bubble Sort or Insertion Sort implementation", "Solve: Merge Sorted Array in-place", "Solve: Three Sum in $O(N^2)$ time complexity"], revision: "Compare worst-case complexity metrics of Bubble Sort and Merge Sort." },
+                            d41: { title: "Day 41: Project 4 Optimization, Review & Delivery", hours: 8, code: "attendance-track", topics: ["Audit React Context components", "CSV export integrations", "Deployments loops setup"], challenge: "Complete responsive Attendance Tracker, deploying final product on Vercel.", dsa: ["Compute roster overall averages tracking rates using reduce chains."], revision: "What problem does prop-drilling introduce in large structures?" },
+                            d42: { title: "Day 42: Company Aptitude Round Preparations (Aptitude Day 1)", hours: 5, code: "aptitude-1", topics: ["Percentages computations shortcuts", "Ratios and proportions modeling", "Deductions grids layouts"], challenge: "Solve 15 timed percentages problems within 30 minutes.", dsa: ["Run timed numerical puzzles exercises on IndiaBIX."], revision: "Record percentages fast calculation conversions templates." }
+                        }
+                    },
+                    w7: {
+                        title: "Week 7: Client Routing & State Architecture",
+                        days: {
+                            d43: { title: "Day 43: Dynamic Routing via React Router", hours: 8, code: "Router.jsx", topics: ["Single Page App routing systems", "Dynamic route parameters extraction", "Redirection navigations flows"], challenge: "Set up layout routers displaying details views on dynamic URL IDs params.", dsa: ["Protect specific routing paths redirection unauthorized users dynamically."], revision: "How does Client-side routing differ from Server-side routing models?" },
+                            d44: { title: "Day 44: Global State Optimization via Context API", hours: 8, code: "Context.jsx", topics: ["Context Providers structures", "State propagation management", "Optimizing context renders updates"], challenge: "Construct global theme providers wrapping deep child panels lists.", dsa: ["Manage multi-step checkout state allocations inside centralized provider."], revision: "Why is Context API suboptimal for high-frequency updates?" },
+                            d45: { title: "Day 45: API Handling with Axios", hours: 8, code: "Axios.jsx", topics: ["Axios client configurations", "Request/Response interceptors setup", "Latency tracker metrics"], challenge: "Build Axios client instances appending custom metadata logs directly to headers.", dsa: ["Write interceptors capturing session expiry, forwarding users to login page."], revision: "State benefits of Axios over standard Fetch clients." },
+                            d46: { title: "Day 46: React Deep Refactoring & Best Practices", hours: 7, code: "lazy-load.jsx", topics: ["Code splitting systems", "Lazy and Suspense loaders", "Folder architecture designs"], challenge: "Dynamic import profile components only when target paths are triggered.", dsa: ["Optimize bundle size tracing chunk divisions via Chrome network tools."], revision: "Detail how Lazy and Suspense structures improve initial load times." },
+                            d47: { title: "Day 47: DSA Day 7: HashMap Placement Standards (Strings Focus)", hours: 8, code: "strings-hashmap-dsa.js", topics: ["Characters indexes frequency mapping", "Dynamic sliding windows mechanisms", "Optimizing lookup operations bounds"], challenge: "Extract first unique character index inside dynamic text blocks.", dsa: ["Solve: First Unique Character in String", "Solve: Group Anagrams using maps keys", "Solve: Longest Substring Without Repeating Characters"], revision: "How does sliding windows reduce algorithms computational complexities?" },
+                            d48: { title: "Day 48: Quantitative Aptitude Core Training (Aptitude Day 2)", hours: 8, code: "aptitude-2", topics: ["Time, Speed and Distance computations", "Work and rate divisions equations", "Train tracking structures"], challenge: "Solve 10 timed train crossings problems with multi-direction metrics.", dsa: ["Complete work completion speed rate formulas assignments."], revision: "Record time-speed conversion formulas maps." },
+                            d49: { title: "Day 49: Week 7 Performance Diagnostic Review", hours: 5, code: "review-7.jsx", topics: ["Tracing client routers exceptions", "Reconciliation metrics analysis", "Debug state loops"], challenge: "Build portfolio selectors loading details pages based on dynamic URL paths in 3 hours.", dsa: ["Evaluate React Render Profile logs during state transitions."], revision: "Review Context render optimizations specifications." }
+                        }
+                    },
+                    w8: {
+                        title: "Week 8: Placement Readiness Prep & Career Positioning",
+                        days: {
+                            d50: { title: "Day 50: Modern Resume Architecture for Tech", hours: 8, code: "resume.tex", topics: ["ATS parser parsing filters", "Structuring STAR formats achievements", "Code link formatting"], challenge: "Write 3 impact achievements using XYZ formats templates.", dsa: ["Export professional technical resume draft using LaTeX compilers."], revision: "State ATS guidelines for multi-column layouts." },
+                            d51: { title: "Day 51: LinkedIn Engineering & Cold Outreach Tactics", hours: 7, code: "outreach", topics: ["Technical branding profiles layouts", "Recruiters messaging scripts setups", "Referral mapping strategies"], challenge: "Draft cold-pitch outline introducing your top MERN stack projects.", dsa: ["Connect with 15 software developers in early startup networks."], revision: "Why are custom warm referrals superior to bulk form applications?" },
+                            d52: { title: "Day 52: DSA Day 8: Basic Stack & Queue Core Mechanics", hours: 8, code: "stack-queue-dsa.js", topics: ["LIFO vs FIFO architectures", "Stack operations bounds", "Queue indices management"], challenge: "Implement custom Stack classes avoiding standard push/pop methods.", dsa: ["Solve: Valid Parentheses brackets checking", "Solve: Implement Queue using Stacks", "Solve: Min Stack in $O(1)$ lookup complexity"], revision: "Detail memory differences between arrays and dynamic linked stack nodes." },
+                            d53: { title: "Day 53: Logical Reasoning Aptitude Prep (Aptitude Day 3)", hours: 8, code: "aptitude-3", topics: ["Coding and Decoding puzzles", "Syllogisms deduction mapping", "Circular seating alignments"], challenge: "Solve 15 seating layouts puzzles with varying condition sets.", dsa: ["Run logic deductions exercises on GeeksforGeeks."], revision: "Record circle alignments seating algorithms patterns." },
+                            d54: { title: "Day 54: Technical Mock Interview Prep (React & Web Core)", hours: 8, code: "mock-interview-1", topics: ["Reconciliations deep questions", "Closures hooks bugs tracking", "State batches operations"], challenge: "Explain React reconciliation flow on camera, tracking pacing parameters.", dsa: ["Create dynamic active-recall cards list mapping core React queries."], revision: "Consolidate React Fiber scheduling patterns." },
+                            d55: { title: "Day 55: Service-Company Practice Placement Exam", hours: 8, code: "placement-exam-1", topics: ["Practice mock certifications", "Evaluating logical reasoning errors", "Timed coding checkpoints"], challenge: "Complete TCS NQT style mock exam validating scores logs.", dsa: ["Solve 2 timed arrays/strings coding questions in under 45 minutes."], revision: "Document common logical patterns found in tests." },
+                            d56: { title: "Day 56: Month 2 Evaluation & Strategic Self-Correction", hours: 5, code: "m2-final", topics: ["Auditing Project 4 structures", "Optimizing profiles configurations", "Planning Month 3 schedules"], challenge: "Audit Project 4, refactoring component states to optimize context.", dsa: ["Review active tracking metrics dashboard logs calculations."], revision: "Verify all project repository links formats." }
+                        }
+                    }
+                }
+            },
+            m3: {
+                title: "Backend Mastery & Database (Node, Express, Mongo, REST APIs & Security)",
+                weeks: {
+                    w9: {
+                        title: "Week 9: Node.js & Express.js Foundations",
+                        days: {
+                            d57: { title: "Day 57: Introduction to the Node.js Runtime", hours: 7, code: "server.js", topics: ["Google V8 Compiler architecture", "Libuv event loop thread pools", "Blocking vs Non-blocking I/O"], challenge: "Read large text system logs asynchronously using built-in fs systems.", dsa: ["Build custom HTTP servers utilizing only native http modules."], revision: "Detail browser event loop structures compared to Node.js event loops." },
+                            d58: { title: "Day 58: Initializing Express.js Core", hours: 8, code: "express-init.js", topics: ["Express application setups", "Dynamic route allocations params", "Parsing JSON payload filters"], challenge: "Build express servers managing inventories operations with REST patterns.", dsa: ["Handle CORS properties dynamically restricting dynamic origins lists."], revision: "Contrast modular Express Router patterns with static server files." },
+                            d59: { title: "Day 59: Writing Express Middleware", hours: 8, code: "middleware.js", topics: ["Middleware execution chains", "Request/Response lifecycle properties", "Security headers injections"], challenge: "Write dynamic logging middleware capturing timestamp method and route latency metrics.", dsa: ["Code rate-limiting middleware blocking requests bursts from static IPs."], revision: "Explain dynamic roles of next() arguments inside express middleware." },
+                            d60: { title: "Day 60: REST API Architectural Best Practices", hours: 8, code: "rest-api.js", topics: ["REST design principles constraints", "Semantic HTTP status codes allocations", "Payload error formatting"], challenge: "Map clean, RESTful endpoints architectures managing nested operations profiles.", dsa: ["Validate JSON formats schemas intercepting invalid requests schemas."], revision: "Detail requirements of completely stateless API models." },
+                            d61: { title: "Day 61: Modular Routing & MVC Pattern", hours: 8, code: "mvc.js", topics: ["Model View Controller (MVC) pattern", "Decoupling routing configurations", "Managing env configurations"], challenge: "Refactor single-file servers into clean controllers, routes, and model folders.", dsa: ["Structure clean global configuration loaders parsing process.env safely."], revision: "State advantages of MVC patterns in collaborative engineering environments." },
+                            d62: { title: "Day 62: DSA Day 9: Core Linked List Foundations", hours: 8, code: "linkedlist-dsa-1.js", topics: ["Pointer manipulations mechanics", "Singly Linked List layouts", "Node references updates"], challenge: "Build Singly LinkedList class from scratch supporting custom appends.", dsa: ["Solve: Reverse a Singly Linked List in $O(1)$ space complexity", "Solve: Middle of the Linked List using slow/fast pointers", "Solve: Merge Two Sorted Lists"], revision: "Detail search and deletion complexity differences of Arrays vs Linked Lists." },
+                            d63: { title: "Day 63: Weekly Assignment & Code Review", hours: 5, code: "review-9.js", topics: ["Express server validations", "Routing exceptions debugs", "Middleware sequence audits"], challenge: "Build Express API tracker saving dynamic elements in-memory under 3 hours.", dsa: ["Trace 5 middleware order execution bugs in sandbox mock script."], revision: "Review Week 9 Express configuration patterns." }
+                        }
+                    },
+                    w10: {
+                        title: "Week 10: MongoDB & Mongoose Integration",
+                        days: {
+                            d64: { title: "Day 64: NoSQL Databases & MongoDB Core", hours: 7, code: "db.js", topics: ["NoSQL document structures architectures", "Atlas cloud clustering setups", "MongoDB Shell CRUD operations"], challenge: "Verify connection loops to MongoDB Atlas clusters with driver pools.", dsa: ["Execute manual database modifications via dynamic MongoDB console queries."], revision: "Compare structural flexibility profiles of SQL tables vs NoSQL collections." },
+                            d65: { title: "Day 65: Mongoose Schemas & Data Modeling", hours: 8, code: "Mongoose.js", topics: ["Mongoose ODM specifications", "Data schema structural validations", "Custom validation rules templates"], challenge: "Write student schema tracking validations rules matching exact parameters.", dsa: ["Configure auto-generated timestamp trackers utilizing schema options."], revision: "Explain dynamic utilities of Object Document Mappers in MERN stack development." },
+                            d66: { title: "Day 66: Performing Database Queries (CRUD)", hours: 8, code: "crud.js", topics: ["Query methods find operations", "Bulk updates configurations", "Deleting records patterns"], challenge: "Build full CRUD express controllers mappings direct database updates.", dsa: ["Integrate skip/limit parameters to manage paginate operations queries."], revision: "Why does findByIdAndUpdate bypass standard schema validators rules?" },
+                            d67: { title: "Day 67: Mongoose Relationships & Referencing", hours: 8, code: "populate.js", topics: ["Embed vs Reference data models", "Primary Key referencing allocations", "Mongoose populate operations"], challenge: "Code relational schemas referencing courses feedback indices to profiles collections.", dsa: ["Resolve circular references exceptions on highly nested population queries."], revision: "Detail performance trade-offs of Embedded data vs Reference IDs paths." },
+                            d68: { title: "Day 68: MongoDB Aggregations & Analytics", hours: 8, code: "aggregation.js", topics: ["Aggregation Pipeline stages", "$match and $group pipelines layouts", "Statistical averages calculations"], challenge: "Build aggregate pipelines compiling course overall metrics averages in database.", dsa: ["Design statistical query stage calculations inside mongoose models."], revision: "Why are aggregate pipeline calculations faster than Javascript memory arrays loops?" },
+                            d69: { title: "Day 69: DSA Day 10: Advanced Linked Lists", hours: 8, code: "linkedlist-dsa-2.js", topics: ["Linked List reversals bounds", "Cycle detection algorithms", "Intersections tracking"], challenge: "Implement list reverse operations for specified sections of nodes list.", dsa: ["Solve: Remove Nth Node From End of List in single-pass", "Solve: Intersection of Two Linked Lists", "Solve: Palindrome Linked List using pointer reversals"], revision: "Detail slow and fast pointer systems analysis utilities." },
+                            d70: { title: "Day 70: Project 5 Integration, Debugging, & Final Polish", hours: 8, code: "feedback-polish", topics: ["Frontend Axios integration", "Resolving CORS blockages", "Error response codes mappings"], challenge: "Deliver completed Feedback Portal, deploying backend database and frontend clients.", dsa: ["Integrate bad-word filter modules inside express feedback routes."], revision: "Draft complete system request-response pipeline flow diagrams." }
+                        }
+                    },
+                    w11: {
+                        title: "Week 11: Security & Authentication Engine",
+                        days: {
+                            d71: { title: "Day 71: Passwords Hashing using Bcrypt", hours: 7, code: "bcrypt.js", topics: ["Cryptographic hash models", "Salting properties mechanisms", "Verification pathways loops"], challenge: "Write custom password validations hooks inside pre-save mongoose events.", dsa: ["Build independent credentials verifier testing hashes matches maps."], revision: "Explain rainbow table exploits and why salt prevents lookup matching." },
+                            d72: { title: "Day 72: JSON Web Tokens Core Mechanics", hours: 8, code: "jwt.js", topics: ["Session-less state authorizations", "JWT components formats: Header, Payload, Signature", "Claim validations scopes"], challenge: "Build modules to sign, verify, and validate expiration indices of JSON Web Tokens.", dsa: ["Incorporate dynamic roles authorization schemas inside signed tokens lists."], revision: "Why are raw security credentials never stored in plain token payloads?" },
+                            d73: { title: "Day 73: Secure HTTPOnly Cookies & Session Tokens", hours: 8, code: "cookies.js", topics: ["LocalStorage security vs Cookies setups", "HTTPOnly and SameSite flags", "CSRF protection strategies"], challenge: "Write cookies-based session token dispatchers inside Express logins pipelines.", dsa: ["Secure authorizations cookies configurations against XSS access scripts."], revision: "State advantages of secure HTTPOnly storage flags over standard localStorage." },
+                            d74: { title: "Day 74: Building Route Protection Middlewares", hours: 8, code: "auth-middleware.js", topics: ["Request headers authorization validations", "Populating req.user details dynamically", "Admin roles authorization wrappers"], challenge: "Write custom protect middlewares parsing token inputs directly from incoming cookies.", dsa: ["Design token rotation pipelines processing refresh actions on expired claims."], revision: "How does populating req.user inside middleware simplify controllers logic?" },
+                            d75: { title: "Day 75: Client Route Guards in React", hours: 8, code: "Guard.jsx", topics: ["Authorization states mappings", "Client redirections pathways", "Protected layout wrappers"], challenge: "Build protected React routing layouts redirection unauthorized client triggers.", dsa: ["Design boot authorization hooks loading profile details before renders."], revision: "Why are server-side validations the final line of authorization security?" },
+                            d76: { title: "Day 76: DSA Day 11: Queue Core Placement Algorithms", hours: 8, code: "queue-dsa.js", topics: ["FIFO buffers mechanisms", "Sliding window tracking indices", "Dynamic bounds allocations"], challenge: "Construct circular queue buffers avoiding standard index out of bounds exceptions.", dsa: ["Solve: Number of Recent Calls tracker", "Solve: Sliding Window Maximum in $O(N)$ complexity", "Solve: Implement Stack using Queues"], revision: "Contrast circular buffer arrays with dynamic linked lists allocations." },
+                            d77: { title: "Day 77: Week 11 Checkpoint, Review & Career Update", hours: 5, code: "review-11.js", topics: ["Audit authentication pipelines", "Debugging token expirations issues", "Tracking progress metrics"], challenge: "Deliver fully operational cookies session tracker and authorization backend in 3.5 hours.", dsa: ["Create technical visual walkthrough showing secure token flow configurations."], revision: "Identify common session hijacks vulnerabilities." }
+                        }
+                    },
+                    w12: {
+                        title: "Week 12: Production-Ready APIs & System Integration",
+                        days: {
+                            d78: { title: "Day 78: Global Error Handling in Express", hours: 7, code: "errorHandler.js", topics: ["Express error handler middleware signatures", "Custom app error entities classes", "Catching uncaught exceptions validations"], challenge: "Build custom app error handler classes compiling detailed exception arrays.", dsa: ["Write catchAsync handlers wrappers eliminating redundant try-catch routes configurations."], revision: "How does Express detect error-handling middlewares based on arguments counts?" },
+                            d79: { title: "Day 79: Input Validation using Joi/Zod", hours: 8, code: "validation.js", topics: ["Request payload validations rules", "Zod schema mappings models", "Blocking requests failures interfaces"], challenge: "Write input validation middlewares matching incoming details objects parameters.", dsa: ["Configure complex future date assertions rules using zod validations validations."], revision: "Contrast manual controllers validations schemas with centralized middlewares schema tools." },
+                            d80: { title: "Day 80: Multi-View React Front-End for Project 6", hours: 8, code: "DoctorUI.jsx", topics: ["Design configurations frameworks", "Structuring patient panels views", "Dynamic calendars allocation rendering"], challenge: "Build responsive layout calendars grids mapping appointment times metrics.", dsa: ["Handle local time zone offset calculations on client calendars models."], revision: "What visual optimizations improve load speeds of highly nested views?" },
+                            d81: { title: "Day 81: Integrating Doctor Management Pipelines", hours: 8, code: "DoctorController.js", topics: ["Updating status operations pipelines", "Sending automatic email alerts notifications", "Dynamic earnings tracker statistics"], challenge: "Write express routes controllers processing confirmations statuses emails updates.", dsa: ["Integrate transactional emailing systems utilizing Nodemailer pools configurations."], revision: "Detail SMTP message pipeline tracking protocols." },
+                            d82: { title: "Day 82: DSA Day 12: Binary Trees & Traversals Basics", hours: 8, code: "binarytree-dsa-1.js", topics: ["Recursive tree traversals mechanics", "Binary tree nodes layouts", "Maximum depth height measurements"], challenge: "Build recursive tree parser class returning traversal order lists.", dsa: ["Solve: Maximum Depth of Binary Tree", "Solve: Inorder Traversal implementation", "Solve: Same Tree validation check recursively"], revision: "Compare performance characteristics of Depth-First Search vs Breadth-First Search." },
+                            d83: { title: "Day 83: Quantitative & Analytical Practice (Aptitude Day 4)", hours: 8, code: "aptitude-4", topics: ["Probability calculations setups", "Permutations and combinations wordings", "Visual analytics mapping graphs"], challenge: "Solve 10 timed probability calculation blocks with varying distributions patterns.", dsa: ["Run charts data analysis speed runs on GeeksforGeeks datasets."], revision: "Record permutations calculation shortcut formulas." },
+                            d84: { title: "Day 84: Month 3 Evaluation & Deployment Phase", hours: 5, code: "m3-final", topics: ["MERN deployment setups", "Server env configurations setups", "DB clustering audits"], challenge: "Deploy Project 6 backend server on Render, client on Vercel, database Atlas.", dsa: ["Check endpoint accessibility mappings profiles using thunder client checks."], revision: "Compile Month 3 full-stack connection maps." }
+                        }
+                    }
+                }
+            },
+            m4: {
+                title: "Full Stack Integration, Interviews, & Job Application Campaign",
+                weeks: {
+                    w13: {
+                        title: "Week 13: AI Integration & Production Deployments",
+                        days: {
+                            d85: { title: "Day 85: Project 7 Implementation (JWT Authentication Engine)", hours: 8, code: "jwt-engine", topics: ["Advanced session invalidation layouts", "Magic links configurations setups", "Dynamic token rotations architectures"], challenge: "Build secure credentials authorization loops tracking and invalidating active session blocks.", dsa: ["Incorporate hardware signatures tracking maps inside login validation stages."], revision: "Explain dynamic security benefits of rotating tokens structures." },
+                            d86: { title: "Day 86: Entering Generative AI Integration (Gemini Pro)", hours: 8, code: "gemini.js", topics: ["Generative AI API integrations", "Prompt formatting structures specifications", "Enforcing strict JSON parser formats"], challenge: "Write Express server routes accepting text inputs and parsing structured JSON summaries responses.", dsa: ["Implement api rate-limit restrictions preventing prompt injection script runs."], revision: "How does strict formatting structure guide prompt processing limits?" },
+                            d87: { title: "Day 87: Designing the AI Study Companion UI", hours: 8, code: "AICompanion.jsx", topics: ["Markdown output parser integrations", "Flashcard dynamic flipping elements", "Score calculations trackers animations"], challenge: "Build responsive markdown study visualizer dashboards panel maps.", dsa: ["Construct card flip visuals utilizing pure CSS dynamic coordinates configurations."], revision: "State efficiency of formatting markdown outputs on client vs server processing." },
+                            d88: { title: "Day 88: Connecting Full MERN Flow for Project 8", hours: 8, code: "ai-flow.js", topics: ["Dynamic state updates databases", "Storing interactive study history summaries", "Asynchronous fetch pipelines loops"], challenge: "Write MERN controller integrating prompt generations and storing summaries histories.", dsa: ["Incorporate stream handlers servers forwarding dynamic prompt completions lists."], revision: "What utility does stream processing provide to chat models?" },
+                            d89: { title: "Day 89: DSA Day 13: Binary Search Trees Standards", hours: 8, code: "bst-dsa.js", topics: ["BST definitions check parameters", "Binary tree insert algorithms", "Value allocations validation"], challenge: "Write validation loops checking if dynamic tree structures are valid BST.", dsa: ["Solve: Search in a Binary Search Tree", "Solve: Insert into a Binary Search Tree", "Solve: Validate Binary Search Tree recursively"], revision: "Worst case time complexity profile of dynamic insert actions inside unbalanced BST." },
+                            d90: { title: "Day 90: Deployment Audit & Portfolio Synthesis", hours: 8, code: "portfolio-deploy", topics: ["Managing multi-app environment variables", "Optimizing Lighthouse metrics scores", "Central assets mapping directories"], challenge: "Compile central portfolio indexing links to all 8 core projects applications.", dsa: ["Audit cross-origin headers setups across all live backends APIs."], revision: "Detail risk vectors of leaking database profiles on GitHub." },
+                            d91: { title: "Day 91: Week 13 Evaluation & Placement Check-In", hours: 5, code: "review-13", topics: ["Auditing dynamic deployments operations", "Documenting README walkthrough parameters", "Structuring portfolio items cards"], challenge: "Optimize README documentations on repositories to include clear steps and walkthrough GIFs.", dsa: ["Test operational parameters across all 8 live deployments links."], revision: "Review Week 13 AI integration architectures patterns." }
+                        }
+                    },
+                    w14: {
+                        title: "Week 14: Structured Interview Preparation & Communication Coaching",
+                        days: {
+                            d92: { title: "Day 92: MERN Technical Deep Dives (JS Core Topics)", hours: 8, code: "js-deep.js", topics: ["Prototypical inheritance structures", "Closures and heap allocations", "TDZ and execution variables"], challenge: "Implement prototypical inheritance model chain from scratch in vanilla JS.", dsa: ["Write custom Promise.all concurrent wrapper function from scratch."], revision: "How does prototypical inheritance differ from class-based systems?" },
+                            d93: { title: "Day 93: MERN Technical Deep Dives (React Engineering)", hours: 8, code: "react-deep.jsx", topics: ["Fiber engine updates scheduling", "Memo, useMemo & useCallback boundaries", "Reconciler diffing algorithms"], challenge: "Build highly optimized list view preventing child re-renders on parent state updates.", dsa: ["Profile render bottlenecks in Attendance Tracker using React DevTools."], revision: "What is the specific overhead of calling useMemo prematurely?" },
+                            d94: { title: "Day 94: MERN Technical Deep Dives (Backend Architecture)", hours: 8, code: "backend-deep.js", topics: ["Node.js threading and clusters", "Mongoose indexing query strategies", "Horizontally scaling architectures"], challenge: "Build clustering setup running Express servers in concurrent thread configurations.", dsa: ["Tune database query performance utilizing MongoDB .explain('executionStats') loops."], revision: "Contrast horizontal API scaling configurations with vertical system scaling." },
+                            d95: { title: "Day 95: HR Situational & Core Behavioral Frameworks", hours: 7, code: "behavioral", topics: ["STAR interview response framework", "Answering career trajectory questions", "Analyzing technical disagreements scenarios"], challenge: "Record a 2-minute elevator pitch detailing your coding journey.", dsa: ["Draft response answering technical dispute scenarios STAR blocks."], revision: "Outline components of XYZ formula achievements records." },
+                            d96: { title: "Day 96: DSA Day 14: Graphs & BFS/DFS Basics", hours: 8, code: "graph-dsa.js", topics: ["Adjacency lists representations", "Depth-First search recursive runs", "Breadth-First searches configurations"], challenge: "Implement Adjacency List graph structure supporting recursive search traversals.", dsa: ["Solve: Find Center of Star Graph", "Solve: Find Path if Exists in Graph", "Solve: Number of Islands using grid traversals"], revision: "Compare space complexities of Adjacency List representations vs Adjacency Matrices." },
+                            d97: { title: "Day 97: Resume Optimization & Final Profile Review", hours: 8, code: "profile-freeze", topics: ["ATS checks evaluations", "GitHub pin boards mapping layouts", "SEO optimization technical profiles"], challenge: "Configure LinkedIn header optimizations and technical keyword integrations.", dsa: ["Freeze technical resumes files after scoring 80+ on free ATS parsers."], revision: "Ensure repo README formats match professional portfolio index entries." },
+                            d98: { title: "Day 98: Week 14 Comprehensive Mock Interview", hours: 5, code: "mock-14", topics: ["Simulating technical interview panels", "Validating communication clarity", "Analyzing logical traps"], challenge: "Perform a complete mock interview session answering 10 technical queries on camera.", dsa: ["Evaluate error logs of items where you struggled to clarify designs."], revision: "Consolidate Week 14 deep-dives patterns." }
+                        }
+                    },
+                    w15: {
+                        title: "Week 15: Mock Assessments & Strategic Placement Preparation",
+                        days: {
+                            d99: { title: "Day 99: DSA Mock Testing (Arrays & Strings)", hours: 8, code: "mock-test-1.js", topics: ["Timed coding challenges", "Sliding window optimization", "Index tracking"], challenge: "Complete 3 easy/medium arrays/strings challenges in under 1 hour.", dsa: ["Solve arrays timed assessment blocks tracing complexity counts."], revision: "Prepare speed lookup cheat sheets for array problems." },
+                            d100: { title: "Day 100: DSA Mock Testing (Linked Lists & Recursion)", hours: 8, code: "mock-test-2.js", topics: ["List pointer reversals", "Recursive depth limitations", "Cycles checks"], challenge: "Complete 2 medium linked list challenges in under 1.5 hours.", dsa: ["Solve list pointer modifications recursive puzzles."], revision: "Explain recursive call stack depth limits operations." },
+                            d101: { title: "Day 101: System Design Basics (API Rate Limiting)", hours: 8, code: "rate-limiter-design.js", topics: ["Rate limiters algorithms", "Token Bucket vs Leaky Bucket", "Redis session storage configurations"], challenge: "Implement Token Bucket middleware in Express using in-memory caches.", dsa: ["Test client bursts requests scenario to verify rate limiter protections."], revision: "Detail burst-handling differences of Token Bucket vs Fixed Window Counter." },
+                            d102: { title: "Day 102: System Design Basics (DB Sharding & Caching)", hours: 8, code: "db-scale-design.js", topics: ["Database sharding mechanisms", "Replication configurations", "Cache validation designs"], challenge: "Build mock dashboard router utilizing local memory caching wrapper.", dsa: ["Set TTL limitations flushing stale values arrays dynamically."], revision: "Detail Write-Through, Write-Behind, and Cache-Aside caching strategies." },
+                            d103: { title: "Day 103: Service Company Placement Assessment", hours: 8, code: "placement-mock-2", topics: ["General quantitative assessments", "Logical deduction exercises", "English communications drills"], challenge: "Complete online service company aptitude mock test under timed bounds.", dsa: ["Solve 2 arrays questions within a strict 30-minute limit."], revision: "Create quick mental templates for mathematical computations." },
+                            d104: { title: "Day 104: Startup Portfolio Showcases", hours: 8, code: "walkthrough-video", topics: ["Screen walkthrough designs", "Explaining architecture layout maps", "Technical storytelling systems"], challenge: "Record 5-minute screen share walkthrough showing Doctor Appointment App architecture.", dsa: ["Publish deep-dives portfolio outline on personal tech blog platforms."], revision: "How does deep documentation capture attention of startup founders?" },
+                            d105: { title: "Day 105: Week 15 Evaluation & Technical Freeze", hours: 5, code: "review-15", topics: ["Freezing portfolio databases", "Configuring pipeline sheet logs", "Planning campaign pathways"], challenge: "Set up targeted job tracker spreadsheets tracking decision makers parameters.", dsa: ["Run final connectivity tests across all 8 deployed applications."], revision: "Review Week 15 system scaling guidelines." }
+                        }
+                    },
+                    w16: {
+                        title: "Week 16: Launching the Placement Campaign",
+                        days: {
+                            d106: { title: "Day 106: Targeting Startups & Service Companies", hours: 8, code: "startup-leads", topics: ["Company classification systems", "Finding dynamic leads", "Scraping hiring datasets"], challenge: "Isolate and list 25 active MERN startups and track engineering leads.", dsa: ["Target and follow 10 startup founders networks on LinkedIn."], revision: "Detail startup hiring channels differences compared to bulk portals." },
+                            d107: { title: "Day 107: High-Impact Cold Email Engineering", hours: 8, code: "cold-emails", topics: ["Cold pitch formatting", "Writing catchy headlines", "Isolating decision maker contacts"], challenge: "Send 3 personalized warm cold-pitches attaching project dashboards.", dsa: ["Locate work emails of target startup CTOs using hunter.io checks."], revision: "How does personalizing cold pitch layouts improve response rates?" },
+                            d108: { title: "Day 108: Securing Referrals & Leveraging Networks", hours: 8, code: "referrals", topics: ["Asking for referrals structures", "Developing warm developer dialogues", "Following up loops"], challenge: "Reach out to 5 software engineers seeking referral support on open roles.", dsa: ["Set up a virtual 15-minute coffee chat with active industry developer."], revision: "Why is an internal referral superior to standard application forms?" },
+                            d109: { title: "Day 109: Surviving Technical Assessments", hours: 8, code: "assessments-prep", topics: ["HackerRank test setups", "Debugging under strict timers", "Edge case allocations"], challenge: "Complete 1-hour timed coding mock assessment on HackerRank.", dsa: ["Solve 3 timed arrays/strings LeetCode questions in under 45 minutes."], revision: "Write templates solving parsing errors on input streams." },
+                            d110: { title: "Day 110: Navigating Startup Technical Interviews", hours: 8, code: "startup-interview-prep", topics: ["Live debugging workflows", "Presenting codebases structures", "Technical debate patterns"], challenge: "Practice live structural edits walkthrough on Doctor Appointment App.", dsa: ["Review answers mapping React Context rendering optimization loops."], revision: "Explain why startups value clean portfolio structures over pure DSA indices." },
+                            d111: { title: "Day 111: Landing Freelance Projects", hours: 8, code: "freelancing-bids", topics: ["Freelance platforms setups", "Bidding proposal formulas", "Pricing strategies maps"], challenge: "Draft customized freelance layout proposal matching client request briefs.", dsa: ["Audit 5 contract role listings on Upwork matching your skillsets."], revision: "Detail risk allocations of contract work compared to full-time roles." },
+                            d112: { title: "Day 112: Week 16 Evaluation & Strategic Self-Correction", hours: 5, code: "review-16", topics: ["Evaluating campaign response metrics", "Auditing outbound pitch scripts", "Refactoring landing displays"], challenge: "Refactor portfolio styling blocks to integrate warm, engaging calls to action.", dsa: ["Update targeted company spreadsheets tracking outreach status profiles."], revision: "Verify Week 16 campaign configurations patterns." }
+                        }
+                    },
+                    w17: {
+                        title: "Week 17 (Days 113-120): Grand Launch, Mock Rotations & Scaling Applications",
+                        days: {
+                            d113: { title: "Day 113: Launching Your Job Applications", hours: 8, code: "applications-launch", topics: ["Managing pipeline run rates", "Portal application structures", "Outreach logs mapping"], challenge: "Submit 5 high-converting applications to startup pipelines.", dsa: ["Solve 2 timed arrays questions in under 30 minutes."], revision: "Record response metrics tracking rates inside spreadsheets tracker." },
+                            d114: { title: "Day 114: Mock Technical Interview (Full MERN Stack)", hours: 8, code: "mock-114", topics: ["Request-response API cycles", "State synchronization setups", "Reconciliation deep questions"], challenge: "Record mock session answers tracing token authentication pipeline details.", dsa: ["Create high-performance Express backend server code in under 1 hour."], revision: "Consolidate Week 17 full-stack mock interview patterns." },
+                            d115: { title: "Day 115: Live API Debugging & Refactoring", hours: 8, code: "debug-session.js", topics: ["Browser profile logs audits", "Hot reloading validations", "Layout reflow tracking"], challenge: "Locate and refactor 3 state render redundancies in Attendance UI.", dsa: ["Resolve cross-origin connection failures inside mock deployment setups."], revision: "How do you detect memory leaks inside React hook closures?" },
+                            d116: { title: "Day 116: Deep SQL vs NoSQL Comparisons", hours: 8, code: "db-comparisons", topics: ["ACID compliance guarantees", "CAP theorem distributed structures", "Relational database constraints"], challenge: "Design identical educational grading schemas in relational tables and mongo docs.", dsa: ["Construct complex aggregates pipeline matching dynamic SQL join queries."], revision: "Explain distributed system partitions behaviors under network failures." },
+                            d117: { title: "Day 117: Quantitative Aptitude Review", hours: 8, code: "aptitude-final", topics: ["Math formulas checklist", "Fast calculations layouts", "Puzzle reasoning grids"], challenge: "Complete 20 speed math quantitative equations in timed dashboard.", dsa: ["Run syllogisms logic deductions tests on GeeksforGeeks."], revision: "Compile master mathematical equations references sheet." },
+                            d118: { title: "Day 118: Communication & Presentation Polish", hours: 8, code: "communication-polish", topics: ["Dynamic codebase presentations", "Technical vocabulary setups", "Storytelling models"], challenge: "Record 5-minute explanation answering standard HR background question.", dsa: ["Write visual codebase maps outlining MERN client-server configurations."], revision: "What phrases improve technical descriptions profiles?" },
+                            d119: { title: "Day 119: Post-Launch Application Push", hours: 8, code: "campaign-push", topics: ["Follow up loops triggers", "Pitch conversions audits", "Tracking recruiters feedbacks"], challenge: "Send follow-up triggers to 5 recruiters at prior targeted pipelines.", dsa: ["Submit 10 portal applications maintaining resume conversions optimization."], revision: "Analyze factors dictating cold outreach success rates." },
+                            d120: { title: "Day 120: Graduation Day & Master Blueprint Review", hours: 6, code: "graduation-final", topics: ["Evaluating complete blueprint targets", "Freezing all repositories lists", "Grand launch tracking"], challenge: "Complete the grand compilation review of all 8 projects links.", dsa: ["Solve 3 timed arrays/strings LeetCode questions in under 45 minutes."], revision: "Celebrate your milestone. Continue daily outreach!" }
+                        }
+                    }
+                }
+            }
+        };
+
+        const projectBlueprints = {
+            p1: { title: "Semantic Personal Portfolio Website", stack: ["Semantic HTML5", "CSS Grid/Flexbox", "Vanilla JS", "EmailJS"], folder: "portfolio-v1/\n├── index.html\n├── assets/\n│   ├── images/\n│   └── resume.pdf\n├── css/\n│   ├── variables.css\n│   ├── main.css\n│   └── responsive.css\n└── js/\n    ├── theme.js\n    └── main.js", steps: ["Draft accessible markup structures utilizing landmarks section elements.", "Define global custom css variables tracking root themes variables maps.", "Create grid layout mappings containing fluid responsive columns cards.", "Incorporate theme.js script writing and reading theme preferences to localStorage."], resume: "• Created fully responsive semantic portfolio using CSS Grid and Flexbox layouts, achieving 98+ Google Lighthouse scores.\n• Integrated client local storage mechanisms to persist custom dark/light theme choices natively.", url: "" },
+            p2: { title: "High-Performance Offline Todo App", stack: ["HTML5", "CSS Variables", "Modern JS (ES6+)", "Web Storage API"], folder: "offline-todo/\n├── index.html\n├── styles/\n│   └── layout.css\n└── app/\n    ├── storage.js\n    └── engine.js", steps: ["Design controlled layout forms with checked tasks classes filters.", "Establish active state configurations variables tracking active categories filters.", "Incorporate update actions mapping elements status changes to local storage.", "Deploy final production builds directly on Netlify platform setups."], resume: "• Engineered offline-first task coordinator using ES6+ Javascript, supporting automatic state caching and LocalStorage synchronization.\n• Built DOM update optimization adapters reducing layout recalculations overhead.", url: "" },
+            p3: { title: "Real-Time Weather Forecaster", stack: ["Vanilla JS (ES6)", "REST Fetch API", "CSS variables", "LeafletJS"], folder: "weather-forecast/\n├── index.html\n├── styles/\n│   └── weather.css\n└── scripts/\n    ├── api.js\n    └── ui.js", steps: ["Acquire developer API keys parsing OpenWeatherMap properties configurations.", "Build asynchronous fetch functions parsing data requests exceptions blocks.", "Map real-time data inputs updating widgets details on cards structures.", "Integrate window online indicators managing system warning banners loops."], resume: "• Constructed RESTful weather API analytical query engine parsing JSON formats under asynchronous try-catch blocks.\n• Integrated browser location indicators leveraging HTML5 Geolocation API, falling back to cached inputs.", url: "" },
+            p4: { title: "Enterprise Attendance Tracker", stack: ["React.js (Vite)", "Tailwind CSS", "React Context", "LocalStorage"], folder: "attendance-tracker/\n├── src/\n│   ├── components/\n│   │   ├── Dashboard.jsx\n│   │   ├── StudentRow.jsx\n│   │   └── Analytics.jsx\n│   ├── context/\n│   │   └── AttendanceContext.jsx\n│   ├── App.jsx\n│   └── main.jsx", steps: ["Bootstrap React application using Vite build wrappers pipelines.", "Declare global Attendance Context Provider managing global configurations.", "Form modular subcomponents rendering listing student details blocks.", "Write statistics reduction maps computing active attendance average scores."], resume: "• Built customizable React attendance dashboard utilizing React Context structures, eliminating prop-drilling entirely.\n• Engineered statistics engine using Javascript ES6 array reduce methods, providing CSV configurations export adapters.", url: "" },
+            p5: { title: "Anonymous Student Feedback Portal", stack: ["React.js", "Express.js", "MongoDB", "Mongoose", "Tailwind CSS"], folder: "student-feedback/\n├── backend/\n│   ├── config/db.js\n│   ├── models/Feedback.js\n│   ├── routes/feedbackRoutes.js\n│   └── server.js\n└── frontend/", steps: ["Build backend database model validation attributes using mongoose schemas.", "Expose express controller endpoints mapping feedback routes GET/POST loops.", "Form controlled rating submission widgets parsing dynamic validations states.", "Resolve CORS authorization properties connecting client Axios modules."], resume: "• Architected dynamic feedback validation portal compiling aggregate scores using MongoDB aggregation pipelines.\n• Built validations middleware checks catching inappropriate comments scripts before database check-in.", url: "" },
+            p6: { title: "Doctor Appointment Booking Platform", stack: ["MERN Stack", "React Router", "JSON Web Tokens", "Nodemailer"], folder: "doctor-appoint/\n├── backend/\n│   ├── controllers/\n│   ├── models/\n│   ├── middleware/\n│   └── routes/\n└── frontend/", steps: ["Model relationships referencing appointments slots to student databases.", "Prevent scheduling collisions blocks tracking slot availability criteria queries.", "Integrate React Router route guards defending personal clinical panels layouts.", "Verify email deliveries loops utilizing Nodemailer SMTP models pools."], resume: "• Developed full-stack scheduling manager, utilizing database constraint assertions checking concurrent slots overlaps.\n• Integrated secure JWT routing protections, defending patient confidential data panels structures via SPA guards.", url: "" },
+            p7: { title: "JWT Session Authentication Engine", stack: ["Node.js", "Express.js", "MongoDB", "HTTPOnly Cookies", "Bcrypt"], folder: "auth-engine/\n├── backend/\n│   ├── middleware/auth.js\n│   └── controllers/authController.js\n└── ...", steps: ["Hash registration credentials passwords using Mongoose document hooks.", "Sign access tokens containing safe profile claims parameters layouts.", "Issue session tracking credentials securely within HTTPOnly cookie containers.", "Write protect middlewares parsing cookie signatures on dynamic routing paths."], resume: "• Implemented secure session manager leveraging HTTPOnly session cookie storage, eliminating dynamic XSS script exploits.\n• Built JWT verification pipeline with token rotation layers, securing client transactions metrics.", url: "" },
+            p8: { title: "AI-Powered Smart Study Companion", stack: ["MERN Stack", "Gemini Pro API", "Markdown Parser", "Tailwind CSS"], folder: "ai-study/\n├── backend/\n│   ├── services/aiService.js\n│   └── ...", steps: ["Sign up Gemini Pro credential maps, loading clients libraries parameters.", "Write backend prompts structures forcing chat responses directly to JSON.", "Design modular markdown dashboard renderer layouts inside frontend files.", "Track histories allocations saving summary arrays directly in databases."], resume: "• Engineered GenAI study assistant integrating Gemini Pro, processing active recall cards directly from raw markdown.\n• Configured express backend prompt validations structures, mitigating runtime exceptions via rate limit safeguards.", url: "" }
+        };
+
+        const staticGraduationList = [
+            { key: "port", label: "Completed 8 Resume-Ready Projects" },
+            { key: "dsa", label: "Solved 100+ Core Placement DSA Puzzles" },
+            { key: "cv", label: "Optimized Resume to 80+ ATS Score" },
+            { key: "ln", label: "LinkedIn Technical Profile Configured" },
+            { key: "git", label: "Achieved Daily Consistency Git Contribution" }
+        ];
+
+        let state = {
+            completedDays: {},
+            completedTasks: {},
+            streak: 0,
+            lastActiveDate: '',
+            jobs: [],
+            projectStatus: {},
+            habitLoop: [false, false, false, false, false],
+            lastHabitResetDate: '',
+            notes: {},
+            selectedMonth: 1
+        };
+
+        function loadStateFromStorage() {
+            const saved = localStorage.getItem('mern_blueprint_state');
+            if (saved) {
+                try {
+                    state = { ...state, ...JSON.parse(saved) };
+                } catch (e) {
+                    console.error("Error reading saved blueprint state.", e);
+                }
+            }
+            
+            // Auto reset daily habits loop on date changes
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (state.lastHabitResetDate !== todayStr) {
+                state.habitLoop = [false, false, false, false, false];
+                state.lastHabitResetDate = todayStr;
+                saveStateToStorage();
+            }
+        }
+
+        function saveStateToStorage() {
+            localStorage.setItem('mern_blueprint_state', JSON.stringify(state));
+            updateMasterMetrics();
+        }
+
+        window.onload = function() {
+            loadStateFromStorage();
+            
+            // Render UI modules
+            renderHabitLoop();
+            renderTodayFocusWidget();
+            renderRoadmapTimeline();
+            renderProjectsDirectory();
+            renderJobTracker();
+            generateCustomPrompt();
+            updateMasterMetrics();
+            
+            // Render random quote
+            const quotes = [
+                "\"Consistency is not about intensity, it is about sustainable daily focus.\"",
+                "\"Your future self is depending on you to write this single block of code today.\"",
+                "\"Do not let complex concepts intimidate you. Break them down into small, digestible chunks.\"",
+                "\"Every commit you push is a step closer to landing your target placement role.\"",
+                "\"When your motivation fails, let your habits and discipline carry you forward.\""
+            ];
+            document.getElementById('daily-motivational-quote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+        };
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('theme-icon').className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+                btn.className = "nav-tab-btn flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800";
+            });
+            
+            const activeBtn = document.getElementById(`btn-tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "nav-tab-btn flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition bg-brand-500 text-white shadow-md shadow-brand-500/10";
+            }
+        }
+
+        function renderHabitLoop() {
+            const loopLabels = [
+                "Completed core study block (Block 1)",
+                "Solved 2-3 DSA problems (Block 3)",
+                "Pushed clean commits to GitHub (Block 2)",
+                "Shared dynamic progress on LinkedIn (Block 4)",
+                "Checked study notes in companion tracker"
+            ];
+            
+            let html = '';
+            state.habitLoop.forEach((checked, idx) => {
+                html += `
+                    <label class="flex items-start space-x-3 text-xs text-brand-100 cursor-pointer hover:text-white transition">
+                        <input type="checkbox" onchange="toggleHabitItem(${idx})" ${checked ? 'checked' : ''} class="mt-0.5 rounded border-brand-800 text-brand-500 focus:ring-brand-500 bg-brand-950/50 h-4 w-4">
+                        <span class="${checked ? 'line-through text-brand-400' : ''}">${loopLabels[idx]}</span>
+                    </label>
+                `;
+            });
+            document.getElementById('habit-loop-container').innerHTML = html;
+        }
+
+        function toggleHabitItem(idx) {
+            state.habitLoop[idx] = !state.habitLoop[idx];
+            saveStateToStorage();
+            renderHabitLoop();
+            triggerSuccessToast("Consistency loop item checked!");
+        }
+
+        function updateMasterMetrics() {
+            let totalDaysCount = 0;
+            let completedCount = 0;
+            let mCounts = { m1: 0, m2: 0, m3: 0, m4: 0 };
+            let mTotals = { m1: 28, m2: 28, m3: 28, m4: 36 };
+
+            Object.keys(curriculumTimeline).forEach(mKey => {
+                const month = curriculumTimeline[mKey];
+                Object.keys(month.weeks).forEach(wKey => {
+                    const week = month.weeks[wKey];
+                    Object.keys(week.days).forEach(dKey => {
+                        totalDaysCount++;
+                        if (state.completedDays[dKey]) {
+                            completedCount++;
+                            mCounts[mKey]++;
+                        }
+                    });
+                });
+            });
+
+            const percentage = totalDaysCount > 0 ? Math.round((completedCount / totalDaysCount) * 100) : 0;
+            
+            document.getElementById('global-streak').innerText = state.streak;
+            document.getElementById('global-completion').innerText = `${percentage}%`;
+            document.getElementById('badge-mastery').innerText = `${percentage}%`;
+            
+            Object.keys(mTotals).forEach(mKey => {
+                const mPercent = Math.round((mCounts[mKey] / mTotals[mKey]) * 100);
+                const statEl = document.getElementById(`stat-month-${mKey.slice(1)}`);
+                const progressEl = document.getElementById(`progress-month-${mKey.slice(1)}`);
+                if (statEl) statEl.innerText = `${mCounts[mKey]} / ${mTotals[mKey]} Days`;
+                if (progressEl) progressEl.style.width = `${mPercent}%`;
+            });
+
+            let completedProjCount = 0;
+            Object.keys(projectBlueprints).forEach(pKey => {
+                if (state.projectStatus[pKey] === "Completed") completedProjCount++;
+            });
+            document.getElementById('badge-projects-count').innerText = `${completedProjCount}/8`;
+
+            renderDashboardProjects();
+            renderGraduationTrackerList(completedProjCount, percentage);
+            document.getElementById('badge-jobs-count').innerText = state.jobs.length;
+            renderTodayFocusWidget();
+        }
+
+        function getDayData(dayNum) {
+            const dKey = `d${dayNum}`;
+            for (let mKey in curriculumTimeline) {
+                const month = curriculumTimeline[mKey];
+                for (let wKey in month.weeks) {
+                    const week = month.weeks[wKey];
+                    if (week.days[dKey]) {
+                        return {
+                            ...week.days[dKey],
+                            dayKey: dKey,
+                            dayNum: dayNum,
+                            monthNum: mKey.slice(1),
+                            weekTitle: week.title
+                        };
+                    }
+                }
+            }
+            return null;
+        }
+
+        function renderTodayFocusWidget() {
+            let todayNum = 1;
+            for (let i = 1; i <= 120; i++) {
+                if (!state.completedDays[`d${i}`]) {
+                    todayNum = i;
+                    break;
+                }
+                if (i === 120) todayNum = 120;
+            }
+
+            document.getElementById('focus-zone-active-indicator').innerText = `Active Target: Day ${todayNum}`;
+
+            const focusDaysIndices = [
+                { role: 'yesterday', num: todayNum - 1 },
+                { role: 'today', num: todayNum },
+                { role: 'tomorrow', num: todayNum + 1 },
+                { role: 'dayafter', num: todayNum + 2 }
+            ];
+
+            let html = '';
+
+            focusDaysIndices.forEach(item => {
+                if (item.num < 1 || item.num > 120) {
+                    html += `
+                        <div class="p-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center text-slate-300 dark:text-slate-700 min-h-[160px]">
+                            <i class="fa-solid fa-ban text-lg mb-1"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-wider">Boundary Limit</span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const day = getDayData(item.num);
+                if (!day) return;
+
+                const isDone = state.completedDays[day.dayKey] || false;
+
+                if (item.role === 'today') {
+                    // HIGH FIDELITY, DETAILED VIEW IN TODAY FOCUS ZONE
+                    html += `
+                        <div class="lg:col-span-2 p-5 rounded-2xl bg-gradient-to-br from-brand-50 to-indigo-50/50 dark:from-brand-950/20 dark:to-indigo-950/10 border-2 border-brand-500 shadow-md shadow-brand-500/5 flex flex-col gap-4 relative">
+                            <span class="absolute top-4 right-4 text-[9px] font-black uppercase tracking-widest bg-brand-500 text-white px-2.5 py-1 rounded-full animate-pulse">Active Today</span>
+                            
+                            <div>
+                                <h4 class="text-[10px] font-black uppercase tracking-widest text-brand-600 dark:text-brand-400">Day ${day.dayNum} • ${day.code}</h4>
+                                <h3 class="text-base font-extrabold text-slate-900 dark:text-white mt-1 leading-tight">${day.title}</h3>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <span class="text-xs font-semibold bg-brand-100 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 px-2 py-0.5 rounded">
+                                        <i class="fa-regular fa-clock mr-1"></i>${day.hours} Hrs Study Target
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-brand-200/40 dark:border-brand-900/40 pt-3 flex flex-col gap-3">
+                                <div>
+                                    <span class="text-[10px] font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">Topics to Study:</span>
+                                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">${day.topics.join(', ')}</p>
+                                </div>
+
+                                <div class="p-3.5 rounded-xl bg-white dark:bg-slate-900/60 border border-brand-100 dark:border-brand-900/40">
+                                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="fa-solid fa-clipboard-question text-brand-500"></i>
+                                        <span>Today's Placement Challenge Task:</span>
+                                    </span>
+                                    <p class="text-xs text-slate-700 dark:text-slate-200 font-medium mt-1 leading-normal">${day.challenge}</p>
+                                </div>
+
+                                <div>
+                                    <span class="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+                                        <i class="fa-solid fa-laptop-code"></i>
+                                        <span>LeetCode / Placement DSA Core Focus:</span>
+                                    </span>
+                                    <ul class="mt-1 flex flex-col gap-1 list-none pl-0">
+                                        ${day.dsa.map(q => `<li class="text-xs text-slate-600 dark:text-slate-300 flex items-start gap-1.5"><i class="fa-solid fa-code text-[10px] text-indigo-400 mt-1"></i> <span>${q}</span></li>`).join('')}
+                                    </ul>
+                                </div>
+
+                                <div>
+                                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Active Recall Interview Check:</span>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 italic mt-0.5">"${day.revision}"</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-2 border-t border-brand-200/40 dark:border-brand-900/40 pt-3 flex items-center justify-between">
+                                <label class="flex items-center gap-2 cursor-pointer bg-white dark:bg-darkCard px-3 py-2 rounded-xl border border-brand-200 dark:border-brand-900 shadow-sm text-xs font-bold text-slate-700 dark:text-slate-200">
+                                    <input type="checkbox" onchange="toggleDayCompletion('${day.dayKey}')" ${isDone ? 'checked' : ''} class="rounded text-brand-500 focus:ring-brand-500 h-4 w-4">
+                                    <span>Mark as Completed</span>
+                                </label>
+                                <button onclick="goToDayInRoadmap(${day.dayNum})" class="text-xs font-extrabold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
+                                    <span>Focus in Roadmap</span>
+                                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else if (item.role === 'yesterday') {
+                    html += `
+                        <div class="p-4 rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/20 dark:bg-emerald-950/5 flex flex-col justify-between min-h-[160px]">
+                            <div>
+                                <span class="text-[9px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <span>Yesterday</span>
+                                </span>
+                                <h4 class="text-xs font-extrabold text-slate-800 dark:text-white mt-2">Day ${day.dayNum}: ${day.title}</h4>
+                                <p class="text-[10px] text-slate-400 mt-1 truncate">${day.code}</p>
+                            </div>
+
+                            <div class="flex flex-col gap-1.5 mt-3">
+                                <button onclick="goToDayInRoadmap(${day.dayNum})" class="text-[10px] font-bold text-slate-500 hover:text-brand-500 text-center transition">View Notes</button>
+                                <button onclick="toggleDayCompletion('${day.dayKey}')" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100/40 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-900/50 py-1 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-950/60 transition text-center">
+                                    Mark Incomplete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const roleLabel = item.role === 'tomorrow' ? 'Tomorrow' : 'Day After';
+                    html += `
+                        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-800/20 flex flex-col justify-between min-h-[160px] opacity-75">
+                            <div>
+                                <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                                    <i class="fa-solid fa-lock text-[8px]"></i>
+                                    <span>${roleLabel}</span>
+                                </span>
+                                <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 mt-2 line-clamp-2">Day ${day.dayNum}: ${day.title}</h4>
+                                <p class="text-[10px] text-slate-400 mt-1">${day.code}</p>
+                            </div>
+
+                            <div class="flex flex-col gap-1.5 mt-3">
+                                <button onclick="goToDayInRoadmap(${day.dayNum})" class="text-[10px] font-bold text-slate-500 hover:text-brand-500 text-center transition">Inspect Goal</button>
+                                <button onclick="toggleDayCompletion('${day.dayKey}')" class="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-1 rounded-lg hover:bg-brand-500 hover:text-white hover:border-brand-500 transition text-center">
+                                    Quick Complete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            document.getElementById('focus-zone-cards-container').innerHTML = html;
+        }
+
+        function goToDayInRoadmap(dayNum) {
+            const dKey = `d${dayNum}`;
+            const day = getDayData(dayNum);
+            if (!day) return;
+            
+            // Switch tab to curriculum
+            switchTab('curriculum');
+            
+            // Filter to appropriate month
+            filterRoadmapMonth(parseInt(day.monthNum));
+            
+            // Scroll to the day row smoothly
+            setTimeout(() => {
+                const dayRow = document.getElementById(`day-row-${dKey}`);
+                if (dayRow) {
+                    dayRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Add animated focus pulse class
+                    dayRow.classList.add('day-pulse-active', 'bg-brand-50/60', 'dark:bg-brand-950/20');
+                    triggerSuccessToast(`Navigating to Day ${dayNum}: ${day.title}`);
+                    
+                    // Remove dynamic highlight after animation duration
+                    setTimeout(() => {
+                        dayRow.classList.remove('day-pulse-active', 'bg-brand-50/60', 'dark:bg-brand-950/20');
+                    }, 4000);
+                }
+            }, 350);
+        }
+
+        function renderDashboardProjects() {
+            let html = '';
+            Object.keys(projectBlueprints).forEach(pKey => {
+                const proj = projectBlueprints[pKey];
+                const status = state.projectStatus[pKey] || "Not Started";
+                const statusClass = status === "Completed" ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40" : status === "In Progress" ? "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/40" : "bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-700/60";
+                
+                html += `
+                    <div class="p-3.5 rounded-xl border border-slate-100 dark:border-darkBorder bg-slate-50/50 dark:bg-slate-800/30 flex justify-between items-center">
+                        <div class="min-w-0">
+                            <h4 class="text-xs font-extrabold truncate text-slate-800 dark:text-slate-200">${proj.title}</h4>
+                            <p class="text-[9px] text-slate-400 mt-0.5">${proj.stack.slice(0, 3).join(', ')}</p>
+                        </div>
+                        <select onchange="updateProjectStatus('${pKey}', this.value)" class="text-[10px] font-bold py-1 px-2.5 rounded-lg border-0 focus:outline-none focus:ring-1 focus:ring-brand-500 ${statusClass} cursor-pointer">
+                            <option value="Not Started" ${status === "Not Started" ? "selected" : ""}>Not Started</option>
+                            <option value="In Progress" ${status === "In Progress" ? "selected" : ""}>In Progress</option>
+                            <option value="Completed" ${status === "Completed" ? "selected" : ""}>Completed</option>
+                        </select>
+                    </div>
+                `;
+            });
+            document.getElementById('dashboard-project-cards').innerHTML = html;
+        }
+
+        function updateProjectStatus(pKey, val) {
+            state.projectStatus[pKey] = val;
+            saveStateToStorage();
+            triggerSuccessToast(`Project status updated to: ${val}`);
+        }
+
+        function renderGraduationTrackerList(completedProjects, progressPercentage) {
+            let html = '';
+            staticGraduationList.forEach(item => {
+                let checkState = false;
+                if (item.key === 'port') checkState = completedProjects === 8;
+                else if (item.key === 'dsa') checkState = progressPercentage >= 45;
+                else if (item.key === 'cv') checkState = progressPercentage >= 65;
+                else if (item.key === 'ln') checkState = progressPercentage >= 80;
+                else if (item.key === 'git') checkState = state.streak >= 15;
+
+                html += `
+                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">${item.label}</span>
+                        ${checkState ? 
+                            `<span class="text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-full"><i class="fa-solid fa-check mr-1"></i> Ready</span>` : 
+                            `<span class="text-[10px] font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 px-2 py-0.5 rounded-full">In Progress</span>`
+                        }
+                    </div>
+                `;
+            });
+            document.getElementById('dashboard-graduation-list').innerHTML = html;
+        }
+
+        function filterRoadmapMonth(mNum) {
+            state.selectedMonth = mNum;
+            
+            document.querySelectorAll('.roadmap-filter-btn').forEach(btn => {
+                btn.className = "roadmap-filter-btn px-3.5 py-1.5 text-xs font-extrabold rounded-lg transition text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-700";
+            });
+            
+            const activeBtn = document.getElementById(`filter-btn-m${mNum}`);
+            if (activeBtn) {
+                activeBtn.className = "roadmap-filter-btn px-3.5 py-1.5 text-xs font-extrabold rounded-lg transition bg-white dark:bg-darkCard shadow-sm text-brand-600 dark:text-brand-400";
+            }
+            
+            renderRoadmapTimeline();
+        }
+
+        function renderRoadmapTimeline() {
+            const monthKey = `m${state.selectedMonth}`;
+            const month = curriculumTimeline[monthKey];
+            let html = '';
+
+            Object.keys(month.weeks).forEach(wKey => {
+                const week = month.weeks[wKey];
+                html += `
+                    <!-- Week Container Accordion -->
+                    <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl shadow-sm overflow-hidden mb-2">
+                        <div class="bg-slate-50 dark:bg-slate-800/30 px-5 py-4 border-b border-slate-100 dark:border-slate-800/80 flex justify-between items-center">
+                            <div>
+                                <h3 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Phase Progression</h3>
+                                <h4 class="text-sm font-extrabold text-slate-800 dark:text-white mt-1">${week.title}</h4>
+                            </div>
+                            <span class="text-xs font-extrabold bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 px-3 py-1 rounded-full">Active Phase</span>
+                        </div>
+
+                        <!-- Days list block -->
+                        <div class="divide-y divide-slate-100 dark:divide-slate-800/50">
+                `;
+
+                Object.keys(week.days).forEach(dKey => {
+                    const day = week.days[dKey];
+                    const isDayDone = state.completedDays[dKey] || false;
+                    const dayNum = dKey.slice(1);
+                    const dayNote = state.notes[dKey] || "";
+
+                    html += `
+                        <div id="day-row-${dKey}" class="p-5 flex flex-col md:flex-row gap-5 items-start transition-all duration-300 border-2 border-transparent">
+                            <!-- Toggle action selector -->
+                            <div class="flex-shrink-0 flex items-center space-x-3 mt-1">
+                                <input type="checkbox" onchange="toggleDayCompletion('${dKey}')" ${isDayDone ? 'checked' : ''} class="rounded border-slate-300 dark:border-darkBorder text-brand-500 focus:ring-brand-500 h-5 w-5 cursor-pointer">
+                                <span class="text-sm font-extrabold text-slate-900 dark:text-white min-w-[50px]">Day ${dayNum}</span>
+                            </div>
+
+                            <!-- Content descriptions maps -->
+                            <div class="flex-1 min-w-0 flex flex-col gap-3">
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <h5 class="text-sm font-extrabold text-slate-900 dark:text-white">${day.title}</h5>
+                                        <span class="text-[10px] font-extrabold bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-md"><i class="fa-regular fa-clock mr-1"></i> ${day.hours} Hrs</span>
+                                        <span class="text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-md">${day.code}</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+                                        <span class="font-extrabold">Topics to learn:</span> ${day.topics.join(', ')}
+                                    </p>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800/50">
+                                    <div>
+                                        <h6 class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                                            <i class="fa-solid fa-clipboard-question text-brand-500"></i>
+                                            <span>Active Practice & Revision Task</span>
+                                        </h6>
+                                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1.5">${day.challenge}</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 italic mt-2"><span class="font-bold">Active recall test:</span> ${day.revision}</p>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                                            <i class="fa-solid fa-laptop-code text-indigo-500"></i>
+                                            <span>Placement DSA Questions Pattern</span>
+                                        </h6>
+                                        <ul class="mt-1.5 flex flex-col gap-1 list-none pl-0">
+                                            ${day.dsa.map(q => `<li class="text-xs text-slate-600 dark:text-slate-300 leading-normal flex items-start gap-1.5"><i class="fa-solid fa-code text-[10px] text-indigo-400 mt-1"></i> <span>${q}</span></li>`).join('')}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Notepad component Cornell logic -->
+                                <div class="flex flex-col gap-2">
+                                    <button onclick="toggleDayNotepad('${dKey}')" class="text-xs font-bold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 self-start transition flex items-center gap-1.5">
+                                        <i class="fa-regular fa-note-sticky"></i>
+                                        <span>Active Recall Notepad (Cornell Format)</span>
+                                    </button>
+                                    <div id="notepad-container-${dKey}" class="hidden flex flex-col gap-2">
+                                        <textarea id="notepad-${dKey}" oninput="saveDayNote('${dKey}', this.value)" rows="3" placeholder="Core Question on Left | Answers and code-snippets on Right. Avoid copy-pasting code templates." class="w-full text-xs font-semibold p-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkBorder rounded-xl focus:outline-none focus:ring-1 focus:ring-brand-500 custom-scrollbar">${dayNote}</textarea>
+                                        <span class="text-[9px] text-slate-400 italic">Saved automatically to dynamic client storage indices.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('roadmap-timeline-container').innerHTML = html;
+        }
+
+        function toggleDayCompletion(dKey) {
+            state.completedDays[dKey] = !state.completedDays[dKey];
+            
+            if (state.completedDays[dKey]) {
+                state.streak++;
+                triggerSuccessToast(`Day ${dKey.slice(1)} completed! Great work!`);
+            } else {
+                state.streak = Math.max(0, state.streak - 1);
+            }
+            
+            saveStateToStorage();
+            renderRoadmapTimeline();
+            renderTodayFocusWidget();
+        }
+
+        function toggleDayNotepad(dKey) {
+            const el = document.getElementById(`notepad-container-${dKey}`);
+            el.classList.toggle('hidden');
+        }
+
+        function saveDayNote(dKey, noteText) {
+            state.notes[dKey] = noteText;
+            saveStateToStorage();
+        }
+
+        function findNextUncompletedDay() {
+            let nextDayNum = 1;
+            
+            for (let i = 1; i <= 120; i++) {
+                if (!state.completedDays[`d${i}`]) {
+                    nextDayNum = i;
+                    break;
+                }
+                if (i === 120) nextDayNum = 120;
+            }
+
+            goToDayInRoadmap(nextDayNum);
+        }
+
+        function renderProjectsDirectory() {
+            let html = '';
+            Object.keys(projectBlueprints).forEach((pKey, idx) => {
+                const proj = projectBlueprints[pKey];
+                
+                html += `
+                    <div class="bg-white dark:bg-darkCard border border-slate-200 dark:border-darkBorder rounded-2xl p-5 shadow-sm flex flex-col gap-4">
+                        <div class="flex justify-between items-start gap-4">
+                            <div>
+                                <span class="text-[9px] font-extrabold bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 px-2 py-0.5 rounded-md">Project ${idx+1}</span>
+                                <h3 class="text-sm font-extrabold text-slate-900 dark:text-white mt-1.5">${proj.title}</h3>
+                            </div>
+                            <button onclick="toggleProjectWalkthrough('${pKey}')" class="text-xs font-bold text-brand-500 hover:text-brand-600 transition flex items-center space-x-1 flex-shrink-0">
+                                <span>Details Plan</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex flex-wrap gap-1">
+                            ${proj.stack.map(s => `<span class="text-[9px] font-bold bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-full border border-slate-100 dark:border-slate-800">${s}</span>`).join('')}
+                        </div>
+
+                        <!-- Collapse detail plans panel structures -->
+                        <div id="project-walkthrough-${pKey}" class="hidden flex flex-col gap-4 border-t border-slate-100 dark:border-slate-800 pt-4">
+                            <div>
+                                <h4 class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Folder Architecture Structure</h4>
+                                <pre class="text-[10px] font-mono p-3 bg-slate-950 text-slate-300 rounded-xl overflow-x-auto leading-relaxed custom-scrollbar">${proj.folder}</pre>
+                            </div>
+
+                            <div>
+                                <h4 class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Action Checklist Steps</h4>
+                                <div class="flex flex-col gap-2">
+                                    ${proj.steps.map((st, sIdx) => `
+                                        <label class="flex items-start gap-2.5 text-xs text-slate-600 dark:text-slate-300 cursor-pointer">
+                                            <input type="checkbox" id="check-step-${pKey}-${sIdx}" class="mt-0.5 rounded border-slate-300 text-brand-500 focus:ring-brand-500 h-4 w-4">
+                                            <span>${st}</span>
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">ATS Resume Ready Description</h4>
+                                <div class="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-950 p-4 rounded-xl relative">
+                                    <pre class="text-[10px] text-slate-600 dark:text-indigo-200 whitespace-pre-wrap leading-normal font-sans">${proj.resume}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('projects-directory-grid').innerHTML = html;
+        }
+
+        function toggleProjectWalkthrough(pKey) {
+            const el = document.getElementById(`project-walkthrough-${pKey}`);
+            el.classList.toggle('hidden');
+        }
+
+        function renderJobTracker() {
+            const container = document.getElementById('job-tracker-rows-container');
+            const emptyEl = document.getElementById('job-tracker-empty-state');
+            
+            if (state.jobs.length === 0) {
+                container.innerHTML = '';
+                emptyEl.classList.remove('hidden');
+                return;
+            }
+            
+            emptyEl.classList.add('hidden');
+            let html = '';
+
+            state.jobs.forEach((job, idx) => {
+                let badgeClass = '';
+                if (job.status === 'Applied') badgeClass = 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-700/60';
+                else if (job.status === 'Tech Test') badgeClass = 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900/40';
+                else if (job.status === 'Interview') badgeClass = 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/40';
+                else if (job.status === 'Offered') badgeClass = 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40 animate-pulse';
+                else badgeClass = 'bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/40';
+
+                html += `
+                    <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all duration-150">
+                        <td class="p-4 font-bold text-slate-900 dark:text-white">${job.company}</td>
+                        <td class="p-4 text-xs font-semibold text-slate-600 dark:text-slate-300">${job.role}</td>
+                        <td class="p-4 text-xs text-slate-500 dark:text-slate-400 font-mono">${job.date}</td>
+                        <td class="p-4 text-xs text-slate-500 dark:text-slate-400 truncate max-w-[150px]">${job.source || 'N/A'}</td>
+                        <td class="p-4">
+                            <span class="text-[9px] font-extrabold px-2.5 py-1 rounded-md ${badgeClass}">${job.status}</span>
+                        </td>
+                        <td class="p-4 text-xs font-semibold text-slate-600 dark:text-slate-300 truncate max-w-[150px]">${job.next || 'N/A'}</td>
+                        <td class="p-4 text-center">
+                            <button onclick="deleteJobOpportunity(${idx})" class="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition" title="Delete Opportunity">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function openJobModal() {
+            document.getElementById('job-modal').classList.remove('hidden');
+            document.getElementById('job-company').value = '';
+            document.getElementById('job-role').value = '';
+            document.getElementById('job-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('job-status').value = 'Applied';
+            document.getElementById('job-source').value = '';
+            document.getElementById('job-next').value = '';
+        }
+
+        function closeJobModal() {
+            document.getElementById('job-modal').classList.add('hidden');
+        }
+
+        function handleJobFormSubmit(event) {
+            event.preventDefault();
+            
+            const newJob = {
+                company: document.getElementById('job-company').value,
+                role: document.getElementById('job-role').value,
+                date: document.getElementById('job-date').value,
+                status: document.getElementById('job-status').value,
+                source: document.getElementById('job-source').value,
+                next: document.getElementById('job-next').value
+            };
+
+            state.jobs.push(newJob);
+            saveStateToStorage();
+            renderJobTracker();
+            closeJobModal();
+            triggerSuccessToast(`Logged job application to ${newJob.company}!`);
+        }
+
+        function deleteJobOpportunity(idx) {
+            state.jobs.splice(idx, 1);
+            saveStateToStorage();
+            renderJobTracker();
+            triggerSuccessToast("Application opportunity cleared!");
+        }
+
+        function generateCustomPrompt() {
+            const useCase = document.getElementById('prompt-use-case-select').value;
+            const topicInput = document.getElementById('prompt-custom-topic').value;
+            
+            let activeStudyTopic = topicInput || "Closures & Scope Chain mechanics";
+            
+            const promptsDatabase = {
+                explain: `ACT AS A SENIOR MERN DEVELOPER TUTOR.\n\nPROMPT COMMAND:\n\"Explain this code block line-by-line, detailing variable hoisting, execution scopes, and memory allocations details:\n\n[PASTE YOUR CODE HERE]\"\n\nFocus Topic: ${activeStudyTopic}\n\nGUIDELINES: Do not give final solutions. Map out mental processes models, describe call stacks order.`,
+                analogy: `ACT AS AN EDUCATIONAL DESIGNER ANALOGIES TUTOR.\n\nPROMPT COMMAND:\n\"Provide 3 intuitive, real-world analogies explaining the concept of:\n\n${activeStudyTopic}\"\n\nGUIDELINES: Map abstractions concepts (like props-drilling or database clusters validations) to physical elements (like courier chains or library indexes).`,
+                edgecases: `ACT AS A ROBUST QA ENGINEERING ARCHITECT.\n\nPROMPT COMMAND:\n\"Generate 5 extreme edge-case unit test scenarios validations for code analyzing this topic:\n\n${activeStudyTopic}\n\nInclude null parameters, overflow constraints, and asynchronous lag patterns.\"`,
+                mockinterview: `ACT AS AN ENGINEERING SYSTEM INTERVIEWER AT A GROWING STARTUP.\n\nPROMPT COMMAND:\n\"Interview me on my understanding of:\n\n${activeStudyTopic}\n\nAsk exactly 1 hard-hitting conceptual query, then wait for my reply. Critique my technical vocabulary strictly and propose adjustments.\"`,
+                refactor: `ACT AS A CLEAN CODE AUDITOR AND REFACTORING MASTER.\n\nPROMPT COMMAND:\n\"Audit this block of code, identify performance bottlenecks and code smells, and suggest clean-code refactoring:\n\n[PASTE YOUR CODE HERE]\"\n\nFocus Topic: ${activeStudyTopic}`
+            };
+
+            document.getElementById('prompt-output-display').innerText = promptsDatabase[useCase] || "Select dynamic template patterns.";
+        }
+
+        function copyPromptToClipboard() {
+            const text = document.getElementById('prompt-output-display').innerText;
+            
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = text;
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            
+            try {
+                document.execCommand('copy');
+                triggerSuccessToast("System Prompt copied to clipboard!");
+            } catch (e) {
+                console.error("Unable to execute clipboard storage write action.", e);
+            }
+            
+            document.body.removeChild(tempTextarea);
+        }
+
+        function toggleMEVModal() {
+            const el = document.getElementById('mev-modal');
+            el.classList.toggle('hidden');
+            
+            document.getElementById('mev-check-1').checked = false;
+            document.getElementById('mev-check-2').checked = false;
+            document.getElementById('mev-check-3').checked = false;
+            document.getElementById('mev-check-4').checked = false;
+        }
+
+        function confirmMEVSaving() {
+            const checks = [
+                document.getElementById('mev-check-1').checked,
+                document.getElementById('mev-check-2').checked,
+                document.getElementById('mev-check-3').checked,
+                document.getElementById('mev-check-4').checked
+            ];
+
+            const completedCount = checks.filter(c => c).length;
+            if (completedCount === 4) {
+                state.streak++;
+                saveStateToStorage();
+                toggleMEVModal();
+                triggerSuccessToast("Great job! Emergency MEV registered. Streak preserved!");
+            } else {
+                triggerSuccessToast("Please check all 4 recovery actions to preserve streak!");
+            }
+        }
+
+        function triggerSuccessToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            
+            toast.className = "fixed bottom-6 right-6 z-50 transform translate-y-0 opacity-100 transition-all duration-300 bg-slate-900 text-white px-5 py-3 rounded-2xl flex items-center space-x-3 shadow-2xl max-w-sm";
+            
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 z-50 transform translate-y-12 opacity-0 transition-all duration-300 bg-slate-900 text-white px-5 py-3 rounded-2xl flex items-center space-x-3 shadow-2xl max-w-sm";
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
